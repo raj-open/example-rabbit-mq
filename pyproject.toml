@@ -1,0 +1,284 @@
+[project]
+name = "example-rabbit-mq"
+version = "0.0.0"
+description = 'Example tool to recursively search a file system from a given point and message rabbit mq'
+authors = [
+    {name="raj-open", email="raj-open@users.noreply.github.com"},
+]
+urls = {homepage = 'https://github.com/raj-open/example-rabbit-mq'}
+maintainers = [
+    {name="raj-open", email="raj-open@users.noreply.github.com"},
+]
+license = 'LICENCE'
+readme = 'README.md'
+keywords = [
+    "python",
+    "rabbit-mq"
+]
+# cf. https://pypi.org/classifiers
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Console",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+]
+requires-python = ">=3.11,<3.15"
+
+dependencies = [
+    # --------------------------------
+    # compiler
+    # --------------------------------
+    "pip>=25.3",
+    # --------------------------------
+    # code - general
+    # --------------------------------
+    "pathlib>=1.0.1",
+    "pathspec>=0.12.1",
+    "codetiming>=1.4.0",
+    "safetywrap>=1.5.0",
+    # --------------------------------
+    # code - async, distr. system
+    # --------------------------------
+    "asyncio>=4.0.0",
+    "lazy-load>=0.8.3",
+    # --------------------------------
+    # web
+    # --------------------------------
+    "certifi>=2025.10.5",
+    # --------------------------------
+    # config
+    # --------------------------------
+    "toml>=0.10.2",
+    "argparse>=1.4.0",
+    "python-dotenv>=1.2.1",
+    "jsonschema>=4.25.1",
+    "pyyaml>=6.0.3",
+    # "lxml>=6.0.2",
+    # --------------------------------
+    # models
+    # --------------------------------
+    "pydantic[email]>=2.12.3",
+    "pydantic-yaml>=1.6.0",
+    # "sqlalchemy>=2.0.44",
+    # "pyodbc>=5.3.0",
+    # --------------------------------
+    # maths + data
+    # --------------------------------
+    # "numpy>=2.3.3",
+    # "pandas>=2.3.2",
+    # "polars>=1.33.1",
+    # "polars-lts-cpu>=1.33.1", # use instead of polars so that it works on docker
+    # "pyarrow>=22.0.0",
+    # "openpyxl>=3.1.5",
+    # "fastexcel>=0.16.0",
+    # "xlsxwriter>=3.2.9",
+    # "pint>=0.25",
+    # --------------------------------
+    # rendering
+    # --------------------------------
+    "tabulate>=0.9.0",
+    # --------------------------------
+    # miscellaneous
+    # --------------------------------
+    "croniter>=6.0.0",
+    "datetime>=5.5",
+    "python-dateutil>=2.9.0.post0",
+    "tzdata>=2025.2", # NOTE: necessary to ensure that OS has access to timezones
+    "pytz>=2025.2",
+    "lorem-text>=3.0",
+    "flatDict>=4.0.1",
+    "strip-ansi>=0.1.1",
+    # --------------------------------
+    # web + API
+    # --------------------------------
+    "httpx>=0.28.1", # NOTE: recommended over requests/urllib(3)
+    "fastapi[all]>=0.120.4",
+    "fastapi-offline>=1.7.5",
+    "uvicorn>=0.38.0",
+    # "Office365-REST-Python-Client>=2.6.2",
+    # --------------------------------
+    # rabbit mq
+    # --------------------------------
+    "pika>=1.3.2",
+]
+
+[dependency-groups]
+dev = [
+    # --------------------------------
+    # testing
+    # --------------------------------
+    "pytest>=8.4.2",
+    "coverage[toml]>=7.11.0",
+    "pytest-cov>=7.0.0",
+    "pytest-order>=1.3.0",
+    "testfixtures>=10.0.0",
+    "behave>=1.3.3",
+    # --------------------------------
+    # model
+    # --------------------------------
+    "datamodel-code-generator>=0.35.0",
+    "openapi-generator-cli>=7.17.0",
+    "openapi-generator>=1.0.6",
+    # --------------------------------
+    # data, mocks
+    # --------------------------------
+    # "faker>=25.5.0",
+    "mimesis[factory]>=18.0.0",
+    # --------------------------------
+    # hooks and linting
+    # --------------------------------
+    # "pre-commit>=4.1.0",
+    "uv>=0.9.7",
+    "ruff>=0.14.3",
+]
+
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.pip]
+extra-index-url = [
+    "https://pypi.org/project/ifcopenshell"
+]
+
+[tool.setuptools.package-data]
+# NOTE: depends on name of project!
+example-rabbit-mq = [
+    'models/*.yaml',
+]
+
+[tool.setuptools.packages.find]
+where = [ 'src' ]
+# NOTE: depends on name of project!
+include = [ 'example-rabbit-mq*' ]
+namespaces = true
+
+[tool.uv]
+managed = true
+package = false
+
+# cf. https://docs.astral.sh/ruff/configuration
+# and https://docs.astral.sh/ruff/settings
+[tool.ruff]
+include = ["pyproject.toml", "src/**/*.py", "tests/**/*.py", "*.ipynb", "*.pyi"]
+exclude = ["src/models/generated/**/*.py"]
+respect-gitignore = true
+line-length = 96
+indent-width = 4
+target-version = "py311"
+fix = true
+
+[tool.ruff.lint]
+fixable = ["ALL"]
+select = ["D", "E", "F", "I", "RUF"]
+ignore = [
+    "ARG001", # allow unused arguments
+    "BLE001", # allow blind exceptions
+    "D100", # do not require docstring for module
+    "D101", # do not require docstring for module
+    "D102", # do not reuire docstring
+    "D103", # do not reuire docstring
+    "D104", # do not reuire docstring
+    "D105", # do not reuire docstring
+    "D106", # do not reuire docstring
+    "D107", # do not reuire docstring
+    "D200", # prevent docstrings from being forced to fit one-line
+    "D203",
+    "D205", # do not require blank line between summary and description in docstring
+    "D211",
+    "D212", # prevent first newline from being removed in docstrings
+    "D400", # prevent grammatical constraints (full stop)
+    "D401", # prevent grammatical constraints (imperative mood)
+    "D403", # prevent case changes in Docstrings.
+    "D404", # allow freedom of expression in docstrings
+    "D415", # do not require punctuation in docstring
+    "EXE001", # allow unused shebangs
+    "E402", # allow module level import to be not at top of file
+    "E501", # ignore "line too long" errors in case "fmt: skip" pragma is used
+    # "E703",
+    "E712", # turn off, as sometimes variables have mixed boolean + string/null types
+    "E731", # allow lambda expressions
+    "F403", # disable as conflicts with *-imports
+    "F405", # disable as conflicts with *-imports
+    # "F541", # allow f-string without placeholders
+    "F841", # unused variables - need to switch off e.g. for decorators
+    "F811", # allow redefinition of methods
+    # "I100", # disable imports from same library being forced into a single ,-separated statement
+    # "I102", # disable multiple import formatting
+    "RUF018", # allow assignment expressions in asserts
+    "RUF028", # allow suppression comments within parts
+    "S110", # allow try-except-pass
+    "TID252", # allow relative imports from parent modules
+    "UP009", # allow utf-8 shebangs
+]
+
+[tool.ruff.lint.isort]
+relative-imports-order = "furthest-to-closest"
+no-sections = false
+from-first = false
+combine-as-imports = false
+case-sensitive = true
+force-single-line = true
+# known-local-folder = ["src", "tests"]
+known-first-party = ["src", "tests"]
+forced-separate = [
+    "tests",
+    "src._core",
+    "src.setup",
+    "src.models",
+    "src",
+]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+line-ending = "lf"
+skip-magic-trailing-comma = false # false = allow trailing comma
+docstring-code-format = false
+docstring-code-line-length = "dynamic"
+
+[tool.pytest.ini_options]
+minversion = "8.4.2"
+testpaths = [
+    "tests",
+]
+python_files = [
+    "**/tests_*.py", # <- pattern for file names to be tested
+]
+asyncio_mode = "auto"
+filterwarnings = [
+    "error",
+    "ignore::UserWarning",
+    "ignore::DeprecationWarning",
+]
+markers = [
+    "remote: tests that require credentials and for connection to remote services in order to run",
+    "rabbit: tests that require rabbit mq to be started in order to run",
+]
+# NOTE: appends (not prepends) flags:
+addopts = [
+    "--order-dependencies",
+    "--order-group-scope=module",
+    "--cache-clear",
+    "--verbose",
+    "--maxfail=1",
+    "-k test_", # <- pattern for methods to count as tests
+    "-k tests_", # <- pattern for methods to count as tests
+    # NOTE: will be ignored, if --cov not used (e.g. integration tests):
+    "--no-cov-on-fail",
+    "--cov-report=term",
+    "--cov-config=.coveragerc",
+    # NOTE: for development purposes only:
+    "-s", # verbose print/err capturing disabled
+    # "--capture=tee-sys", # verbose print/err capturing enabled
+    "-m",
+    "not (remote or rabbit)",
+]
