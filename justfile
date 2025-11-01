@@ -434,9 +434,9 @@ clear-logs log_path="${PATH_LOGS}":
     @rm -rf "{{log_path}}" 2> /dev/null
 
 create-logs log_path="${PATH_LOGS}":
-    @just create-logs-part "debug" "{{log_path}}"
-    @just create-logs-part "out"   "{{log_path}}"
-    @just create-logs-part "err"   "{{log_path}}"
+    @just _create-logs-part "debug" "{{log_path}}"
+    @just _create-logs-part "out"   "{{log_path}}"
+    @just _create-logs-part "err"   "{{log_path}}"
 
 _create-logs-part part log_path="${PATH_LOGS}":
     @mkdir -p "{{log_path}}"
