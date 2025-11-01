@@ -1,0 +1,64 @@
+/**
+
+# ----------------------------------------------------------------
+# ROOT
+# ----------------------------------------------------------------
+
+!/justfile
+!/pyproject.toml
+!/.coveragerc
+!/.behaverc
+
+# ----------------------------------------------------------------
+# PROJECT
+# ----------------------------------------------------------------
+
+!/dist
+!/dist/VERSION
+
+!/templates
+!/templates/template*
+
+!/scripts
+!/scripts/*.py
+!/scripts/*.sh
+
+!/models
+!/models/common
+!/models/**/*.yaml
+
+!/docs
+!/docs/**/
+!/docs/**/*.md
+
+!/src
+!/src/**/
+!/src/**/*.py
+# the app-config (used internally for code only)
+!/src/setup/*.yaml
+
+!/tests
+!/tests/**/
+!/tests/**/*.py
+!/tests/**/*.feature
+/tests/*/resources/**
+!/tests/*/resources/**/
+!/tests/*/resources/**/MOCK*
+
+# ----------------------------------------------------------------
+# FORCE REMOVE
+# ----------------------------------------------------------------
+
+**/logs
+**/.vscode
+**/*.tmp
+**/.DS_Store
+**/__archive__*
+**/__pycache__*
+/build
+
+# ----------------------------------------------------------------
+# FORCE RETAIN
+# ----------------------------------------------------------------
+
+!**/.gitkeep

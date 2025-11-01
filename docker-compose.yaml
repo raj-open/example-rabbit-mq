@@ -1,0 +1,241 @@
+networks:
+  default:
+    name: ${DOCKER_PROJECT}
+    driver: bridge
+
+# ----------------------------------------------------------------
+# TEMPLATES, COMPONENTS
+# ----------------------------------------------------------------
+
+secrets:
+  credentials:
+    file: .env.docker-secrets
+
+# ----------------------------------------------------------------
+# SERVICES
+# ----------------------------------------------------------------
+
+services:
+  # --------------------------------
+  # SERVICE: builds container
+  # --------------------------------
+
+  base:
+    image: local/examplerabbitmq:base
+
+    env_file:
+      - .env
+      - .env.docker-vars
+
+    secrets:
+      - credentials
+
+    build: &ref_build
+      context: .
+      pull: false
+      dockerfile: Dockerfile
+      target: stage-base
+      args:
+        USER: "basicuser"
+        TIMEZONE: "${DOCKER_TIMEZONE}"
+        PYTHON_PATH: "${PYTHON_PATH}"
+
+    tty: true
+    stdin_open: true
+    user: root
+
+  # --------------------------------
+  # SERVICE: builds container
+  # --------------------------------
+
+  build:
+    image: local/examplerabbitmq:build
+
+    env_file:
+      - .env
+      - .env.docker-vars
+
+    secrets:
+      - credentials
+
+    build:
+      <<: *ref_build
+      target: stage-build
+
+    tty: true
+    stdin_open: true
+    user: basicuser
+    command: |-
+      bash --login -c '
+        echo "success"
+      '
+
+  # --------------------------------
+  # SERVICE: runs qa steps
+  # --------------------------------
+
+  qa:
+    image: local/examplerabbitmq:build # <- i.e. use this image
+    env_file:
+      - .env
+      - .env.docker-vars
+    secrets:
+      - credentials
+    volumes: []
+    tty: false
+    stdin_open: false
+    user: basicuser
+    command: |-
+      bash --login -c '
+        just prettify || exit 1
+        just tests-unit || exit 1
+      '
+
+  # --------------------------------
+  # SERVICE: starts server
+  # --------------------------------
+
+  server:
+    image: local/examplerabbitmq:build # <- i.e. use this image
+
+    env_file:
+      - .env
+      - .env.docker-vars
+
+    secrets:
+      - credentials
+
+    # standard
+    volumes:
+      - type: bind
+        source: ${PATH_LOGS}
+        target: //home/basicuser/app/logs
+      - ./setup://home/basicuser/app/setup:ro
+      - ./data://home/basicuser/app/data:rw
+
+    # # for debugging
+    # volumes:
+    #   - ${PATH_LOGS}://home/basicuser/app/logs:rw
+    #   - ./setup://home/basicuser/app/setup:ro
+    #   - ./data://home/basicuser/app/data:rw
+    #   - ./scripts://home/basicuser/app/scripts:ro
+    #   - ./src://home/basicuser/app/src:ro
+    #   - ./tests://home/basicuser/app/tests:ro
+    #   - ./pyproject.toml://home/basicuser/app/pyproject.toml:ro
+    #   - ./justfile://home/basicuser/app/justfile:ro
+
+    ports:
+      # HOST-IP:HOST-PORT:CONTAINER (note: uses values in .env)
+      - ${DOCKER_HOST_IP}:${DOCKER_HOST_PORT}:${DOCKER_CONTAINER_PORT}
+
+    tty: true
+    stdin_open: true
+
+    healthcheck:
+      # time before first healthcheck
+      start_period: 30s
+      # time between health checks
+      interval: 60s
+      # if healthcheck exceeds this, declares healthcheck as failure
+      timeout: 30s
+      # if number of failures exceeds this, declares container unhealthy
+      retries: 5
+      # the healthcheck
+      test: |-
+        bash --login -c '
+          curl -f "${HTTP_IP}:${HTTP_PORT}/api/ping" || exit 1
+        '
+
+    user: root
+    # restart: unless-stopped
+    restart: no
+    # entrypoint: "//home/basicuser/app/scripts/entrypoint.sh"
+    command: just serve-fastapi
+
+  # --------------------------------
+  # SERVICE: queue
+  # --------------------------------
+
+  queue-build:
+    image: local/examplerabbitmq:queue
+
+    env_file:
+      - .env
+      - .env.docker-vars
+
+    secrets:
+      - credentials
+
+    build:
+      context: .
+      pull: false
+      dockerfile: Dockerfile.queue
+      target: stage-base
+
+    tty: true
+    stdin_open: true
+    command: |-
+      bash --login -c '
+        echo "success"
+      '
+
+  queue-server:
+    image: local/examplerabbitmq:queue # <- i.e. use this image
+    hostname: ${HTTP_HOST_NAME_RABBIT}
+
+    env_file:
+      - .env
+      - .env.docker-vars
+
+    secrets:
+      - credentials
+
+    volumes:
+      - ${PATH_LOGS_QUEUE}://var/log/rabbitmq:rw
+      - ${PATH_LOGS_QUEUE_STATE}://var/lib/rabbitmq:rw
+
+    ports:
+      # HOST-IP:HOST-PORT:CONTAINER (note: uses values in .env)
+      # communication
+      - ${DOCKER_HOST_IP}:${DOCKER_HOST_PORT_RABBIT_QUEUE}:${DOCKER_CONTAINER_PORT_RABBIT_QUEUE}
+      # admin web
+      - ${DOCKER_HOST_IP}:${DOCKER_HOST_PORT_RABBIT_WEB}:${DOCKER_CONTAINER_PORT_RABBIT_WEB}
+
+    # restart: always
+    command: |-
+      rabbitmq-server
+
+  queue-admin:
+    image: local/examplerabbitmq:queue # <- i.e. use this image
+
+    env_file:
+      - .env
+      - .env.docker-vars
+
+    secrets:
+      - credentials
+
+    volumes:
+      - ${PATH_LOGS_QUEUE}://var/log/rabbitmq:rw
+      - ${PATH_LOGS_QUEUE_STATE}://var/lib/rabbitmq:rw
+
+    networks:
+      - default
+
+    tty: true
+    stdin_open: true
+    depends_on:
+      - queue-server
+    command: |-
+      bash --login -c '
+        source /run/secrets/credentials
+        rabbitmqctl --node rabbit@${HTTP_HOST_NAME_RABBIT} list_users
+        # create admin
+        rabbitmqctl --node rabbit@${HTTP_HOST_NAME_RABBIT} delete_user $${HTTP_ADMIN_USER_RABBIT} 2> /dev/null
+        rabbitmqctl --node rabbit@${HTTP_HOST_NAME_RABBIT} add_user $${HTTP_ADMIN_USER_RABBIT} $${HTTP_ADMIN_PASSWORD_RABBIT}
+        rabbitmqctl --node rabbit@${HTTP_HOST_NAME_RABBIT} set_user_tags $${HTTP_ADMIN_USER_RABBIT} administrator
+        # create guest
+        rabbitmqctl --node rabbit@${HTTP_HOST_NAME_RABBIT} delete_user $${HTTP_GUEST_USER_RABBIT} 2> /dev/null
+        rabbitmqctl --node rabbit@${HTTP_HOST_NAME_RABBIT} add_user $${HTTP_GUEST_USER_RABBIT} $${HTTP_GUEST_PASSWORD_RABBIT}
+        rabbitmqctl --node rabbit@${HTTP_HOST_NAME_RABBIT} set_permissions -p / $${HTTP_GUEST_USER_RABBIT} ".*" ".*" ".*"
+      '
