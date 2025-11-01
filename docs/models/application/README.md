@@ -23,6 +23,7 @@ All URIs are relative to *https://acme.org*
  - [RepoInfo_urls](./Models/RepoInfo_urls.md)
  - [RequestTask](./Models/RequestTask.md)
  - [RequestTaskData](./Models/RequestTaskData.md)
+ - [RequestTaskOptions](./Models/RequestTaskOptions.md)
  - [RequestsPayload](./Models/RequestsPayload.md)
 
 
