@@ -34,8 +34,6 @@
 !/src
 !/src/**/
 !/src/**/*.py
-# the app-config (used internally for code only)
-!/src/setup/*.yaml
 
 !/tests
 !/tests/**/
