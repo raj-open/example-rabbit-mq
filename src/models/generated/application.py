@@ -4,8 +4,9 @@
 from __future__ import annotations
 
 from enum import Enum
+from typing import Any
 
-from pydantic import AnyUrl, BaseModel, ConfigDict
+from pydantic import AnyUrl, BaseModel, ConfigDict, Field, RootModel
 
 
 class Urls(BaseModel):
@@ -30,11 +31,154 @@ class RepoInfo(BaseModel):
     urls: Urls
 
 
+class GeneralConfig(BaseModel):
+    """
+    Structure of configuration of application for use with features.
+
+    NOTE: not yet implemented
+    """
+
+    model_config = ConfigDict(
+        extra="allow",
+        populate_by_name=True,
+    )
+    version: str = Field(
+        default="X.Y.Z",
+        description="User defined version. Bump this value with every change to the config.",
+    )
+
+
+class RequestTaskOptions(BaseModel):
+    """
+    Structure of requests payload > options
+
+    NOTE: not yet implemented
+    """
+
+    model_config = ConfigDict(
+        extra="allow",
+        populate_by_name=True,
+    )
+
+
+class MetaData(BaseModel):
+    """
+    Struct containing information about an object in a filesystem
+    """
+
+    model_config = ConfigDict(
+        extra="forbid",
+        populate_by_name=True,
+    )
+    filename: str = Field(
+        ..., description="Filename (without path, but with extension)"
+    )
+    basename: str = Field(
+        ..., description="Filename without path and without extension"
+    )
+    ext: str = Field(..., description="Extension of file")
+    size: Any = Field(..., description="Size of file in bytes")
+    author: str | None = Field(default=None, description="Author of file")
+    author_id: str | None = Field(default=None, description="Id of author of file")
+    time_created: Any | None = Field(default=None, alias="time-created")
+    time_updated: Any | None = Field(default=None, alias="time-updated")
+
+
+class EnumFeatures(str, Enum):
+    """
+    Enumeration of features
+    """
+
+    VERSION = "version"
+    SEARCH_FS = "SEARCH-FS"
+
+
+class EnumDataFileFormat(str, Enum):
+    """
+    Enumeration of data file formats.
+    """
+
+    FIELD_JSON = ".json"
+    FIELD_YAML = ".yaml"
+    FIELD_TOML = ".toml"
+    FIELD_XML = ".xml"
+    FIELD_PARQUET = ".parquet"
+    FIELD_CSV = ".csv"
+    FIELD_XLSX = ".xlsx"
+
+
 class EnumFilesSystem(str, Enum):
     """
     Location of file system
     """
 
     OS = "OS"
-    BLOB = "BLOB"
+    BLOB_STORAGE = "BLOB-STORAGE"
     SHAREPOINT = "SHAREPOINT"
+
+
+class FileRef(BaseModel):
+    """
+    Structured reference to a file
+    """
+
+    model_config = ConfigDict(
+        extra="forbid",
+        populate_by_name=True,
+    )
+    location: EnumFilesSystem = Field(
+        default=EnumFilesSystem.OS,
+        description="Which files management system is used to locate the file",
+    )
+    path: str = Field(default=".", description="Absolute path to file.")
+    format: EnumDataFileFormat | None = Field(
+        default=None,
+        description='Optional format of file to be loaded (e.g. `".json"` or `".yaml"`).',
+    )
+
+
+class RequestTaskData(BaseModel):
+    """
+    Structure of requests payload > data
+    """
+
+    model_config = ConfigDict(
+        extra="forbid",
+        populate_by_name=True,
+    )
+    inputs: FileRef
+
+
+class ProxyConfig(BaseModel):
+    """
+    A proxy config which simply links to another config file.
+    """
+
+    model_config = ConfigDict(
+        extra="allow",
+        populate_by_name=True,
+    )
+    ref: FileRef
+
+
+class RequestTask(BaseModel):
+    """
+    Structure of requests payload
+    """
+
+    model_config = ConfigDict(
+        extra="forbid",
+        populate_by_name=True,
+    )
+    label: str = Field(..., description="Label of task")
+    options: RequestTaskOptions
+    data: RequestTaskData
+
+
+class RequestsPayload(RootModel[RequestTask | list[RequestTask]]):
+    model_config = ConfigDict(
+        populate_by_name=True,
+    )
+    root: RequestTask | list[RequestTask] = Field(
+        ..., description="Structure of requests payload"
+    )
