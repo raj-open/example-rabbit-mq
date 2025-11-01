@@ -4,8 +4,8 @@ label: 'Some label'
 # NOTE: not yet implemented
 options:
   max-depth: 100
-  max-count: 10_000_000
-  max-time: 00:30:00
+  max-items: 10_000_000
+  max-duration: 00:30:00
 
 # The main request
 data:
