@@ -87,6 +87,7 @@ services:
     user: basicuser
     command: |-
       bash --login -c '
+        source /run/secrets/credentials
         just prettify || exit 1
         just tests-unit || exit 1
       '
@@ -115,7 +116,9 @@ services:
 
     # # for debugging
     # volumes:
-    #   - ${PATH_LOGS}://home/basicuser/app/logs:rw
+    #   - type: bind
+    #     source: ${PATH_LOGS}
+    #     target: //home/basicuser/app/logs
     #   - ./setup://home/basicuser/app/setup:ro
     #   - ./data://home/basicuser/app/data:rw
     #   - ./scripts://home/basicuser/app/scripts:ro
@@ -143,14 +146,18 @@ services:
       # the healthcheck
       test: |-
         bash --login -c '
-          curl -f "${HTTP_IP}:${HTTP_PORT}/api/ping" || exit 1
+          curl -f "${HTTP_IP}:${HTTP_PORT}/ping" || exit 1
         '
 
-    user: root
+    user: basicuser
     # restart: unless-stopped
     restart: no
     # entrypoint: "//home/basicuser/app/scripts/entrypoint.sh"
-    command: just serve-fastapi
+    command: |-
+      bash --login -c '
+        source /run/secrets/credentials
+        just run-server
+      '
 
   # --------------------------------
   # SERVICE: queue

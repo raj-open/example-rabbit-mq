@@ -1,3 +1,11 @@
-ref:
-  location: OS # enum for file system
-  path: 'relative/or absolute path to directory'
+# For logging purposes - a recognisable label for the task
+label: 'Some label'
+
+# NOTE: not yet implemented
+options: {}
+
+# The main request
+data:
+  inputs:
+    location: OS # enum for file system
+    path: 'relative/or absolute path to directory'
