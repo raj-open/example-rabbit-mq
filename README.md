@@ -9,7 +9,7 @@
 
 # Example Rabbit MQ #
 
-This repository provides an example implementation of a tool with a single feature `SEARCH-FS`,
+This repository provides an example implementation of a tool with a single feature `SEARCH-FILESYSTEM`,
 which upon performs the following:
 
 - given a request payload;
@@ -61,8 +61,6 @@ The main code base can be run in three modes:
 - via the API
 - via the API within docker
 
-The cli-usage is limited
-
 ### Docker-free usage ###
 
 For all sakes and purposes, so that local docker-less execution is possible,
@@ -73,6 +71,21 @@ just build
 ```
 
 which assumes that the .env file has been correctly set up.
+One can then either call
+
+```bash
+just run-server
+```
+
+to start the server
+(which can be interacted with via Postman and/or cURL commands)
+or else use the CLI:
+
+```bash
+just run-cli --help # displays usage
+just run-cli version # displays version
+just run-cli SEARCH-FS # runs the main feature
+```
 
 ### Usage with docker ###
 
@@ -84,7 +97,13 @@ just docker-build # builds the application
 just docker-qa # performs qa on the docker image of the main code base
 ```
 
-To start the ap
+to build the application (once),
+then use the following commands to start/stop the server within docker:
+
+```bash
+just docker-start-server
+just docker-stop-server
+```
 
 ## Usage of Rabbit Message Queue ##
 
@@ -140,5 +159,6 @@ Password: ${HTTP_GUEST_PASSWORD_RABBIT}
 
 ## Execution ##
 
-Start the queue (see [above](#activationdeactivation-of-queue)).
-Start the server
+1. Start the queue (see [above](#activationdeactivation-of-queue)).
+
+2. Use the CLI commands or the API with/without docker (see [above](#usage-of-main-application)).
