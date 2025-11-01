@@ -1,7 +1,10 @@
 openapi: 3.0.3
 info:
-  version: "0.0.0"
-  title: Schemata for config files.
+  version: "0.1.0"
+  title: General models for application
+  description: |-
+    Schemata for data models in application - configs, enums, etc.
+
 servers:
   - url: "https://acme.org"
 paths: {}

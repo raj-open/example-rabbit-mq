@@ -1,4 +1,4 @@
-# Documentation for Schemata for config files.
+# Documentation for General models for application
 
 <a name="documentation-for-api-endpoints"></a>
 ## Documentation for API Endpoints
