@@ -89,6 +89,7 @@ dependencies = [
     "datetime>=5.5",
     "python-dateutil>=2.9.0.post0",
     "tzdata>=2025.2", # NOTE: necessary to ensure that OS has access to timezones
+    "tzlocal>=5.3.1",
     "pytz>=2025.2",
     "lorem-text>=3.0",
     "flatDict>=4.0.1",
