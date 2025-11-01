@@ -1,0 +1,20 @@
+- label: 'First task'
+  options: {}
+  data:
+    inputs:
+      location: OS
+      path: 'path/to/directory1'
+
+- label: 'Second task'
+  options: {}
+  data:
+    inputs:
+      location: OS
+      path: 'path/to/directory2'
+
+- label: 'Third task'
+  options: {}
+  data:
+    inputs:
+      location: OS
+      path: 'path/to/directory3'
