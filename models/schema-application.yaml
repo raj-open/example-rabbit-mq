@@ -1,0 +1,62 @@
+openapi: 3.0.3
+info:
+  version: "0.0.0"
+  title: Schemata for config files.
+servers:
+  - url: "https://acme.org"
+paths: {}
+components:
+  schemas:
+    # ----------------------------------------------------------------
+    # DEFINITIONS
+    # ----------------------------------------------------------------
+
+    # --------------------------------
+    # Repository Infos
+    # --------------------------------
+
+    RepoInfo:
+      description: |-
+        Basic infos about repo - parses `pyproject.toml`
+      type: object
+      required:
+        - name
+        - description
+        - version
+        - urls
+      # NOTE: allow this, as this will be parsed from pyproject.toml
+      additionalProperties: true
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        version:
+          type: string
+        urls:
+          type: object
+          properties:
+            homepage:
+              type: string
+              format: uri
+              default: "https://domain.com"
+          additionalProperties:
+            type: string
+            format: uri
+
+    # ----------------------------------------------------------------
+    # ENUMS
+    # ----------------------------------------------------------------
+
+    # --------------------------------
+    # ENUM: for file system
+    # --------------------------------
+
+    EnumFilesSystem:
+      description: |-
+        Location of file system
+      type: string
+      enum:
+        - OS
+        - BLOB
+        - SHAREPOINT
