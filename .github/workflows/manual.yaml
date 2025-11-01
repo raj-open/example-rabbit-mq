@@ -1,0 +1,114 @@
+name: QA [+ CD] (manual)
+
+on:
+  workflow_dispatch:
+    inputs:
+      docker-image:
+        description: Choice of docker image on which to run action.
+        default: ubuntu-latest
+        type: choice
+        options:
+          - ubuntu-latest
+      environment:
+        description: 'Choice of environment for pipeline'
+        # NOTE: this option provides dropdown list of choices of environments set on GitHub (enterprise only)
+        type: environment
+        required: true
+        default: 'local'
+      deploy:
+        description: 'Deploy code?'
+        type: boolean
+        default: false
+      # NOTE: currently not used, but can use in future
+      log-level:
+        description: 'Log level'
+        default: INFO
+        type: choice
+        options:
+          - INFO
+          - DEBUG
+          - WARNING
+
+permissions:
+  contents: read
+
+env: {}
+
+jobs:
+  qa:
+    name: QA
+    # runs-on: [self-hosted, "${{ github.event.inputs.os }}", x64, gpu]
+    runs-on: ${{ github.event.inputs.docker-image }}
+    environment: "${{ github.event.inputs.environment }}"
+    env:
+      PROJECT_NAME: "${{ vars.PROJECT_NAME }}"
+      PYTHON_PATH: "${{ vars.PYTHON_PATH }}"
+
+    steps:
+      - uses: actions/checkout@v5.0.0
+
+      - name: Action - install justfile tool
+        uses: extractions/setup-just@v3
+        with:
+          just-version: "*"
+
+      - name: Action - install Python
+        uses: actions/setup-python@v6.0.0
+        with:
+          python-version: "${{ vars.PYTHON_VERSION }}"
+
+      - name: Setup - ping basic tools and perform pre-installation
+        shell: bash
+        run: |-
+          just --version
+          python3 --version
+          python3 -m pip install --upgrade pip wheel
+          just setup
+
+      - name: Setup - add .env file
+        shell: bash
+        run: |-
+          cat <<EOF > .env
+          PYTHON_PATH="${{ vars.PYTHON_PATH }}"
+          EOF
+
+      - name: STEP 1 - build code
+        shell: bash
+        run: |-
+          just build
+
+      - name:  STEP 2 - check linting
+        shell: bash
+        run: |-
+          just lint "src"
+          just lint "tests"
+
+      - name:  STEP 3 - run unit tests
+        shell: bash
+        run: |-
+          just tests-unit
+
+      - name:  STEP 4 - run behavioural tests
+        shell: bash
+        run: |-
+          #just tests-behave
+          echo "Not yet implemented"
+
+  # only performed if qa passes and option set
+  deploy:
+    name: DEPLOY
+    needs: 'qa'
+    # job only runs if deploy-checkbox is selected
+    if: ${{ github.event.inputs.deploy == 'true' }}
+    runs-on: ${{ github.event.inputs.docker-image }}
+    environment: "${{ github.event.inputs.environment }}"
+    env: {}
+    steps:
+      - uses: actions/checkout@v5.0.0
+
+      - name: STEP 1 - Deploy
+        shell: bash
+        run: |-
+          echo "::group::Deploy step empty"
+          echo "::warning::Deployment is not yet implemented";
+          echo "::endgroup::"

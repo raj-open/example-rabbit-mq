@@ -1,0 +1,85 @@
+name: QA (automatic)
+
+on:
+  pull_request:
+    branches:
+      - main
+      - staging
+      - develop
+      - release
+      - 'dev-*'
+      - 'bugfix-*'
+      - 'hotfix-*'
+      - 'feat-*'
+      - 'feature-*'
+      - 'story-*'
+    paths:
+      - '**/*'
+    # see <https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#discussion>
+    types:
+      - opened
+      - edited
+      - reopened
+      - ready_for_review
+      - unlocked
+
+permissions:
+  contents: read
+
+env: {}
+
+jobs:
+  qa:
+    name: QA
+    runs-on: "ubuntu-latest"
+    environment: "local"
+    env: {}
+    steps:
+      - uses: actions/checkout@v5.0.0
+
+      - name: Action - install justfile tool
+        uses: extractions/setup-just@v3
+        with:
+          just-version: "*"
+
+      - name: Action - install Python
+        uses: actions/setup-python@v6.0.0
+        with:
+          python-version: "${{ vars.PYTHON_VERSION }}"
+
+      - name: Setup - ping basic tools and perform pre-installation
+        shell: bash
+        run: |-
+          just --version
+          python3 --version
+          python3 -m pip install --upgrade pip wheel
+          just setup
+
+      - name: Setup - add .env file
+        shell: bash
+        run: |-
+          cat <<EOF > .env
+          PYTHON_PATH="${{ vars.PYTHON_PATH }}"
+          EOF
+
+      - name: STEP 1 - build code
+        shell: bash
+        run: |-
+          just build
+
+      - name:  STEP 2 - check linting
+        shell: bash
+        run: |-
+          just lint "src"
+          just lint "tests"
+
+      - name:  STEP 3 - run unit tests
+        shell: bash
+        run: |-
+          just tests-unit
+
+      - name:  STEP 4 - run behavioural tests
+        shell: bash
+        run: |-
+          # just tests-behave
+          echo "Not yet implemented"
