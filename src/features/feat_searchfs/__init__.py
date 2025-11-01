@@ -16,6 +16,5 @@ from .superfeature import *
 # ----------------------------------------------------------------
 
 __all__ = [
-    "superfeature_direct",
-    "superfeature_queue",
+    "superfeature",
 ]
