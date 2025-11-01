@@ -243,14 +243,14 @@ docker-setup progress="tty":
     @just _docker-build "base" "{{progress}}"
 
 docker-build progress="tty":
-    @just _create-logs "${PATH_LOGS}"
+    @just create-logs "${PATH_LOGS}"
     @just _docker-build "build" "{{progress}}"
 
 docker-qa progress="tty":
     @just _docker-up "qa" "{{progress}}"
 
 docker-start-server progress="tty":
-    @just _create-logs "${PATH_LOGS}"
+    @just create-logs "${PATH_LOGS}"
     @just _docker-up "server" "{{progress}}"
 
 docker-stop-server:
@@ -278,7 +278,6 @@ docker-register-users progress="tty":
 
 # Recipe only works if local file dev exists
 dev *args:
-    @just _reset-logs
     @{{PYVENV_ON}} && {{PYVENV}} -m dev {{args}}
 
 docker-dev:
@@ -327,7 +326,6 @@ kill-port PORT:
 # --------------------------------
 
 test-unit path *args:
-    @just _reset-logs
     @{{PYVENV_ON}} && pytest "{{path}}" {{args}}
 
 test-unit-one path method:
@@ -344,15 +342,13 @@ tests-unit:
 qa:
     @{{PYVENV_ON}} && coverage report -m
 
-coverage source_path tests_path log_path="${PATH_LOGS}":
-    @just _reset-logs "{{log_path}}"
+coverage source_path tests_path:
     @{{PYVENV_ON}} && pytest {{tests_path}} \
         --ignore=tests/integration \
         --cov-reset \
         --cov={{source_path}} \
         --capture=tee-sys \
         2> /dev/null
-    @just _display-logs
 
 # --------------------------------
 # TARGETS: prettify
@@ -434,30 +430,17 @@ clean-docker-full service project="${DOCKER_PROJECT}" file="docker-compose.yaml"
 # TARGETS: logging, session
 # --------------------------------
 
-_clear-logs log_path="${PATH_LOGS}":
+clear-logs log_path="${PATH_LOGS}":
     @rm -rf "{{log_path}}" 2> /dev/null
+
+create-logs log_path="${PATH_LOGS}":
+    @just create-logs-part "debug" "{{log_path}}"
+    @just create-logs-part "out"   "{{log_path}}"
+    @just create-logs-part "err"   "{{log_path}}"
 
 _create-logs-part part log_path="${PATH_LOGS}":
     @mkdir -p "{{log_path}}"
     @touch "{{log_path}}/{{part}}.log"
-
-_create-logs log_path="${PATH_LOGS}":
-    @just _create-logs-part "debug" "{{log_path}}"
-    @just _create-logs-part "out"   "{{log_path}}"
-    @just _create-logs-part "err"   "{{log_path}}"
-
-_reset-logs log_path="${PATH_LOGS}":
-    @- just _clear-logs "{{log_path}}" 2> /dev/null
-    @just _create-logs "{{log_path}}"
-
-_display-logs:
-    @echo ""
-    @echo "Content of ${PATH_LOGS}/debug.log:"
-    @echo "----------------"
-    @echo ""
-    @- cat ${PATH_LOGS}/debug.log
-    @echo ""
-    @echo "----------------"
 
 watch-logs n="10":
     @tail -f -n {{n}} ${PATH_LOGS}/out.log
