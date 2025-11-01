@@ -1,7 +1,10 @@
 openapi: 3.0.3
 info:
-  version: "0.0.0"
-  title: Schemata for config files.
+  version: "0.1.0"
+  title: General models for application
+  description: |-
+    Schemata for data models in application - configs, enums, etc.
+
 servers:
   - url: "https://acme.org"
 paths: {}
@@ -44,9 +47,191 @@ components:
             type: string
             format: uri
 
+    # --------------------------------
+    # Proxy config
+    # --------------------------------
+
+    ProxyConfig:
+      description: |-
+        A proxy config which simply links to another config file.
+      type: object
+      required:
+        - ref
+      # since this can be set externally, allow superfluous properties (which will be ignored)
+      additionalProperties: true
+      properties:
+        ref:
+          $ref: "#/components/schemas/FileRef"
+
+    FileRef:
+      description: |-
+        Structured reference to a file
+      type: object
+      required: []
+      additionalProperties: false
+      properties:
+        location:
+          description: |-
+            Which files management system is used to locate the file
+          $ref: "#/components/schemas/EnumFilesSystem"
+          default: "OS"
+        path:
+          description: |-
+            Absolute path to file.
+          type: string
+          default: "."
+        format:
+          description: |-
+            Optional format of file to be loaded (e.g. `".json"` or `".yaml"`).
+          $ref: "#/components/schemas/EnumDataFileFormat"
+
+    # --------------------------------
+    # General Config of Application
+    # --------------------------------
+
+    GeneralConfig:
+      description: |-
+        Structure of configuration of application for use with features.
+
+        NOTE: not yet implemented
+
+      type: object
+      required: []
+      # since this can be set externally, allow superfluous properties (which will be ignored)
+      additionalProperties: true
+      properties:
+        version:
+          description: |-
+            User defined version. Bump this value with every change to the config.
+          type: string
+          default: "X.Y.Z"
+
+    # --------------------------------
+    # User Request
+    # --------------------------------
+
+    RequestsPayload:
+      description: |-
+        Structure of requests payload
+      oneOf:
+        - $ref: "#/components/schemas/RequestTask"
+        - type: array
+          items:
+            $ref: "#/components/schemas/RequestTask"
+
+    RequestTask:
+      description: |-
+        Structure of requests payload
+      type: object
+      required:
+        - label
+        - options
+        - data
+      additionalProperties: false
+      properties:
+        label:
+          description: |-
+            Label of task
+          type: string
+        options:
+          $ref: "#/components/schemas/RequestTaskOptions"
+        data:
+          $ref: "#/components/schemas/RequestTaskData"
+
+    RequestTaskOptions:
+      description: |-
+        Structure of requests payload > options
+
+        NOTE: not yet implemented
+      type: object
+      additionalProperties: true
+
+    RequestTaskData:
+      description: |-
+        Structure of requests payload > data
+      required:
+        - inputs
+      additionalProperties: false
+      properties:
+        inputs:
+          $ref: "#/components/schemas/FileRef"
+
+
+    # --------------------------------
+    # User Request
+    # --------------------------------
+
+    MetaData:
+      description: |-
+        Struct containing information about an object in a filesystem
+      required:
+        - filename
+        - basename
+        - ext
+        - size
+      additionalProperties: false
+      properties:
+        filename:
+          description: |-
+            Filename (without path, but with extension)
+          type: string
+        basename:
+          description: |-
+            Filename without path and without extension
+          type: string
+        ext:
+          description: |-
+            Extension of file
+          type: string
+        size:
+          description: |-
+            Size of file in bytes
+          type: int
+        author:
+          description: |-
+            Author of file
+          type: string
+        author_id:
+          description: |-
+            Id of author of file
+          type: string
+        time-created:
+          type: datetime
+        time-updated:
+          type: datetime
+
     # ----------------------------------------------------------------
     # ENUMS
     # ----------------------------------------------------------------
+
+    # --------------------------------
+    # ENUM: file formats
+    # --------------------------------
+
+    EnumFeatures:
+      description: |-
+        Enumeration of features
+      type: string
+      enum:
+        - version
+        - SEARCH-FS
+
+    # --------------------------------
+    # ENUM: file formats
+    # --------------------------------
+
+    EnumDataFileFormat:
+      description: |-
+        Enumeration of data file formats.
+      type: string
+      enum:
+        - .json
+        - .yaml
+        - .toml
+        - .xml
+        - .parquet
+        - .csv
+        - .xlsx
 
     # --------------------------------
     # ENUM: for file system
@@ -58,5 +243,5 @@ components:
       type: string
       enum:
         - OS
-        - BLOB
+        - BLOB-STORAGE
         - SHAREPOINT
