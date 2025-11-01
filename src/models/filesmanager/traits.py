@@ -240,42 +240,45 @@ class FilesManagerFolder(Protocol):
         """
         ...
 
-    @property
-    def subfolders(self) -> list[FilesManagerFolder]:
+    def get_file(self, name: str, /) -> FilesManagerFile:
         """
-        Gets list of subfolder within folder
-        """
-        ...
-
-    def get_subfolder(self, name: str) -> FilesManagerFolder:
-        """
-        Gets subfolder by name within folder
+        Gets file object by name within folder
         """
         ...
 
-    @property
-    def files(self) -> list[FilesManagerFile]:
+    def get_filenames(self) -> list[str]:
         """
-        Gets list of files within folder
-        """
-        ...
-
-    @property
-    def filenames(self) -> list[str]:
-        """
-        Returns names of all files in folder.
+        Get all filenames in folder
         """
         ...
 
-    def has_file(self, file: FilesManagerFile) -> bool:
+    def get_files(self) -> list[FilesManagerFile]:
         """
-        Checks if file of given name exists in folder.
+        Gets all file objects in folder
         """
         ...
 
-    def get_file(self, name: str) -> FilesManagerFile:
+    def get_subfolder(self, name: str, /) -> FilesManagerFolder:
         """
-        Gets file by name within folder
+        Gets subfolder object by name within folder
+        """
+        ...
+
+    def get_subfolder_paths(self) -> list[str]:
+        """
+        Gets all paths to subfolders within folder
+        """
+        ...
+
+    def get_subfolders(self) -> list[str]:
+        """
+        Gets all subfolder objects within folder
+        """
+        ...
+
+    def has_file(self, file: FilesManagerFile, /) -> bool:
+        """
+        Checks if file of given name exists in folder
         """
         ...
 
