@@ -16,6 +16,7 @@ from ...models.application import *
 from ...models.filesmanager import *
 from ...models.internal.errors import *
 from ...setup import *
+from .steps import *
 
 # ----------------------------------------------------------------
 # EXPORTS
@@ -44,11 +45,23 @@ def feature(
     """
     Feature `SEARCH-FS`
     """
-    try:
-        managers = config.get_managers()
-        cfg_general = config.parser_config().parse()
+    # NOTE: currently unused
+    # cfg_general = config.parser_config().parse()
+    managers = config.get_managers()
 
-        raise NotImplementedError("feature SEARCH-FS not yet implemented")
+    try:
+        # locate directory in file system
+        root = ref_inputs.path
+        loc = ref_inputs.location
+        manager = managers[loc]
+
+        step_search_directory(
+            manager,
+            path=root,
+            max_depth=options.max_depth,
+            max_items=options.max_items,
+            max_duration=options.max_duration,
+        )
 
         return Ok("success")
 

@@ -2,20 +2,19 @@
 # -*- coding: utf-8 -*-
 
 """
-Submodule for the SEARCH-FS feature
+Steps/substeps of feature
 """
 
 # ----------------------------------------------------------------
 # IMPORTS
 # ----------------------------------------------------------------
 
-from .superfeature import *
+from .steps_search import *
 
 # ----------------------------------------------------------------
 # EXPORTS
 # ----------------------------------------------------------------
 
 __all__ = [
-    "superfeature_direct",
-    "superfeature_queue",
+    "step_search_directory",
 ]
