@@ -186,7 +186,7 @@ services:
         echo "success"
       '
 
-  queue-server:
+  queue-server: &ref_queue-server
     image: local/examplerabbitmq:queue # <- i.e. use this image
     hostname: ${HTTP_HOST_NAME_RABBIT}
 
@@ -198,8 +198,12 @@ services:
       - credentials
 
     volumes:
-      - ${PATH_LOGS_QUEUE}://var/log/rabbitmq:rw
-      - ${PATH_LOGS_QUEUE_STATE}://var/lib/rabbitmq:rw
+      - type: bind
+        source: ${PATH_LOGS_QUEUE}
+        target: //var/log/rabbitmq
+      - type: bind
+        source: ${PATH_LOGS_QUEUE_STATE}
+        target: //var/lib/rabbitmq
 
     ports:
       # HOST-IP:HOST-PORT:CONTAINER (note: uses values in .env)
@@ -213,26 +217,13 @@ services:
       rabbitmq-server
 
   queue-admin:
-    image: local/examplerabbitmq:queue # <- i.e. use this image
-
-    env_file:
-      - .env
-      - .env.docker-vars
-
-    secrets:
-      - credentials
-
-    volumes:
-      - ${PATH_LOGS_QUEUE}://var/log/rabbitmq:rw
-      - ${PATH_LOGS_QUEUE_STATE}://var/lib/rabbitmq:rw
-
-    networks:
-      - default
-
-    tty: true
-    stdin_open: true
+    <<: *ref_queue-server
     depends_on:
       - queue-server
+    networks:
+      - default
+    tty: true
+    stdin_open: true
     command: |-
       bash --login -c '
         source /run/secrets/credentials
