@@ -25,14 +25,15 @@ For ease of use one can also run the demos as follows:
 
     where `{name}` is the name of the subfolder, e.g. `"example-case-1"`.
 
-> [!TIP]
-> Call
->
-> ```bash
-> just demo "example-all"
-> ```
->
-> to run all the examples.
+    > [!TIP]
+    > Call one of
+    >
+    > ```bash
+    > just demo "example-all"
+    > just demos # equivalent command
+    > ```
+    >
+    > to run all the examples.
 
 ## Results ##
 
