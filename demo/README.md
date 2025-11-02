@@ -15,13 +15,13 @@ For ease of use one can also run the demos as follows:
 
     ```bash
     just docker-start-queue
-    ``
+    ```
 
 3. In terminal 2 run the command
 
     ```bash
     just demo {name}
-    ````
+    ```
 
     where `{name}` is the name of the subfolder, e.g. `"example-case-1"`.
 
@@ -29,4 +29,4 @@ For ease of use one can also run the demos as follows:
 
 The current demos should result in the following:
 
-![Results](./img/results-demo.png)
+![Results](img/results-demo.png)

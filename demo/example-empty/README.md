@@ -21,7 +21,7 @@ Run as follows
 
     ```bash
     just run SEARCH-FS --requests 'demo/example-empty/requests.yaml'
-    ````
+    ```
 
 ## Expected results ##
 
