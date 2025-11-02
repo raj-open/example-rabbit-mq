@@ -1,13 +1,13 @@
-#  Demo #
+# Demo #
 
-Each folder in this directory contains an example file system with requests config.
+Each folder in this directory contains an example filesystem with requests config.
 
 The README file in each folder explains how to run tool against the case
 and the expected outcome.
 
-For ease of use one can also run the demos as follows:
+## General usage ##
 
-Run as follows
+For ease of use one can also run the demos as follows:
 
 1. Open 2 terminals
 
@@ -24,3 +24,9 @@ Run as follows
     ````
 
     where `{name}` is the name of the subfolder, e.g. `"example-case-1"`.
+
+## Results ##
+
+The current demos should result in the following:
+
+![Results](./img/results-demo.png)

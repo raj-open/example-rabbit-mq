@@ -191,6 +191,7 @@ label: 'Mock example'
 
 # apply some generous limits
 options:
+  # skip-empty: true # false (default) => includes empty files; true => skips them
   max-depth: 100 # limits depth of folder structure
   max-items: 1_000_000 # limits number of items that can be logged
   max-duration: 00:05:00 # limits maximum computation time
@@ -234,3 +235,7 @@ data:
 
         The file reference in this body can of course be a json
         and located anywhere on your system.
+
+## Demos ##
+
+Some simple example cases can be found in the [demo](demo) folder.

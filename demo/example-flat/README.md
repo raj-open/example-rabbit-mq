@@ -1,4 +1,11 @@
-# Example - Empty #
+# Example - Flat #
+
+## Description ##
+
+- An folder with no nesting.
+- `skip-empty` set to `true`
+
+## Execution ##
 
 Run as follows
 
@@ -16,4 +23,7 @@ Run as follows
     just run SEARCH-FS --requests 'demo/example-flat/requests.yaml'
     ````
 
-This should yield 4 messages in the queue.
+## Expected results ##
+
+- Should yield 4 messages in the queue.
+- The empty file should be skipped.

@@ -1,7 +1,7 @@
-label: 'Demo Case 3'
+label: 'Demo Case 4'
 
 options:
-  skip-empty: true
+  skip-empty: false
   max-depth: 100
   max-items: 10_000_000
   max-duration: 00:30:00
@@ -9,4 +9,4 @@ options:
 data:
   inputs:
     location: OS
-    path: 'demo/example-case-3/data'
+    path: 'demo/example-case-4/data'

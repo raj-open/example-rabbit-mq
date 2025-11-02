@@ -1,8 +1,8 @@
-# Example - Case 2 #
+# Example - Case 4 #
 
 ## Description ##
 
-- An nearly flat file system with a nested folder containing empty files.
+- A nested filesystem with some empty files
 - `skip-empty` set to `false`
 
 ## Execution ##
@@ -20,11 +20,11 @@ Run as follows
 3. In terminal 2 run the command
 
     ```bash
-    just run SEARCH-FS --requests 'demo/example-case-2/requests.yaml'
+    just run SEARCH-FS --requests 'demo/example-case-4/requests.yaml'
     ````
 
 ## Expected results ##
 
-- Should yield 6 messages in the queue.
-- The folders at lowest level should be logged.
+- Should yield 26 messages in the queue.
+- All files at all levels should be covered.
 - The nested subfolder containing empty logs should _not_ be skipped.

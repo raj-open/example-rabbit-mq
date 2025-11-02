@@ -1,5 +1,12 @@
 # Example - Empty #
 
+## Description ##
+
+- An "empty" folder
+- `skip-empty` set to `true`
+
+## Execution ##
+
 Run as follows
 
 1. Open 2 terminals
@@ -16,4 +23,6 @@ Run as follows
     just run SEARCH-FS --requests 'demo/example-empty/requests.yaml'
     ````
 
-This should yield 0 messages in the queue.
+## Expected results ##
+
+- Should yield 0 messages in the queue.

@@ -70,6 +70,8 @@
 !/demo/example*/data/**/*.log
 !/demo/example*/README.md
 !/demo/example*/requests.yaml
+!/demo/img
+!/demo/img/*.png
 
 # ----------------------------------------------------------------
 # FORCE REMOVE
