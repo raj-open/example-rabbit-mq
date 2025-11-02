@@ -33,6 +33,7 @@ from src._core.logging import *
 # ----------------------------------------------------------------
 
 gen = Generic()
+PROB_EMPTY_FILE = 0.1
 
 # ----------------------------------------------------------------
 # METHODS
@@ -49,29 +50,29 @@ def parse_args(*args: str):
         "--path",
         type=str,
         help="absolute or relative path to directory to be created",
-        # nargs="?",
-        # default="data/example",
+        nargs="?",
+        default="data/example",
     )
     parser.add_argument(
         "--max-depth",
         type=int,
         help="maximum depth of folders",
-        # nargs="?",
-        # default=4,
+        nargs="?",
+        default=4,
     )
     parser.add_argument(
         "--max-folders",
         type=int,
         help="maximum count files count",
-        # nargs="?",
-        # default=100,
+        nargs="?",
+        default=100,
     )
     parser.add_argument(
         "--max-files",
         type=int,
         help="maximum count files count",
-        # nargs="?",
-        # default=1000,
+        nargs="?",
+        default=1000,
     )
     logging.info(args)
     args_parsed = parser.parse_args(args)
@@ -95,7 +96,7 @@ def create_folder(
     p.mkdir(parents=True, exist_ok=True)
 
     # generate random file names
-    k = random.randint(1, k_files)
+    k = random.randint(0, k_files)
     basenames = [gen.food.dish() for _ in range(k)]
     extension = random.choices([".txt", ".csv", ".md"], k=k)
     filenames = [f"{x}{ext}" for x, ext in zip(basenames, extension)]
@@ -103,7 +104,9 @@ def create_folder(
     # create files and contents
     for filename in filenames:
         path_ = os.path.join(path, filename)
-        content = lorem.paragraph().encode()
+        content = b""
+        if random.uniform(0, 1) < 1 - PROB_EMPTY_FILE:
+            content = lorem.paragraph().encode()
         logging.info(f"- create file '{filename}' with {len(content)/SIZE_1_KB:.4f} kb of data")  # fmt: skip
 
         p = Path(path_)
@@ -116,7 +119,7 @@ def create_folder(
         return
 
     # otherwise proceed
-    k = random.randint(1, k_folders)
+    k = random.randint(0, k_folders)
     foldernames = [gen.address.city() for _ in range(k)]
 
     for foldername in foldernames:
