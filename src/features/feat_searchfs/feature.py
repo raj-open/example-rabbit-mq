@@ -94,7 +94,7 @@ def feature(
                 recursive_file_search(
                     manager,
                     path=root,
-                    skip_empty=False,
+                    skip_empty=options.skip_empty,
                 ),
                 # keep track of number of items found
                 start=1,
