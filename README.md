@@ -206,9 +206,11 @@ data:
 
 1. Start the queue (see [above](#activationdeactivation-of-queue)).
 
-2. Use the CLI commands or the API with/without docker (see [above](#usage-of-main-application)).
+2. Ensure that the queue-users are registered (see [above](#set-up-users)).
 
-3. Run the feature:
+3. Use the CLI commands or the API with/without docker (see [above](#usage-of-main-application)).
+
+4. Run the feature:
 
     - For the CLI option, call
 
