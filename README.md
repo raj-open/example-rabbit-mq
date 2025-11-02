@@ -29,6 +29,10 @@ which upon performs the following:
 
 - [docker + CLI tools](https://docs.docker.com/engine/install)
 
+- (optional) [Postman](https://www.postman.com).
+    Cf. the [wiki](https://github.com/raj-open/example-rabbit-mq/wiki/Postman-Setup)
+    for an prepared environment + collection.
+
 NOTE: We primarily use Docker for local testing, in particular to spin up a Rabbit MQ server.
 
 ## Basic setup ##
