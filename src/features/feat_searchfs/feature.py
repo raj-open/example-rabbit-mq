@@ -5,9 +5,14 @@
 # IMPORTS
 # ----------------------------------------------------------------
 
+import json
 import logging
 from datetime import datetime
+from datetime import timedelta
+from functools import partial
 
+from pika import BasicProperties
+from pika import BlockingConnection
 from safetywrap import Err
 from safetywrap import Ok
 from safetywrap import Result
@@ -40,46 +45,68 @@ __all__ = [
 def feature(
     *,
     label: str,
-    ref_inputs: FileRef,
+    ref: FileRef,
     options: RequestTaskOptions,
 ) -> Result[str, str]:
     """
     Feature `SEARCH-FS`
     """
+    feat = EnumFeatures.SEARCH_FS
     # NOTE: currently unused
     # cfg_general = config.parser_config().parse()
     managers = config.get_managers()
 
+    # create guard to safeguard against computational limits
+    guard = partial(
+        guard_limits,
+        max_depth=options.max_depth,
+        max_items=options.max_items,
+        max_duration=options.max_duration,
+        t_max=datetime.now() + options.max_duration,
+    )
+
     try:
-        # locate directory in file system
-        root = ref_inputs.path
-        loc = ref_inputs.location
-        manager = managers[loc]
+        """
+        connect to message queue and perform task
+        """
+        # FIXME: publication to exchages fails
+        # msg_exchange = feat.value
+        msg_exchange = ""
+        msg_route = label
+        msg_properties = BasicProperties(type="info")
 
-        # determine computational limits
-        max_depth = options.max_depth
-        max_items = options.max_items
-        dt = options.max_duration
-        t = datetime.now()
-        t_max = t + dt
+        settings = config.get_queue_parameters()
+        with BlockingConnection(settings) as connection:
+            chan = connection.channel()
+            # FIXME: publication to exchages fails
+            # chan.exchange_declare(exchange=msg_exchange, exchange_type="direct")
+            chan.queue_declare(queue=msg_route)
 
-        # run search algorithm and apply guards to prevent unlimited search duration
-        count = 0
-        for d, subpath, filename in recursive_file_search(manager, path=root):
-            # terminate if search takes too long
-            if (t := datetime.now()) >= t_max:
-                raise TimeoutError(f"search algorithm terminated - exceeded maximum tolerated duration of {dt}")  # fmt: skip
+            # locate directory in file system
+            root = ref.path
+            loc = ref.location
+            manager = managers[loc]
 
-            # terminate if depth exceeds limits
-            if d > max_depth:
-                raise Exception(f"search algorithm terminated - directory depth exceeeded maximum tolerated depth of {max_depth}")  # fmt: skip
-
-            # terminate if number of items exceeds limits
-            count += 1
-            if count > max_items:
-                raise Exception(f"search algorithm terminated - item count exceeededs maximum tolerated value of {max_items}")  # fmt: skip
-
-            logging.warning(f"notify '{subpath}/{filename}' - not yet implemented")
+            """
+            run search algorithm and apply guards to prevent unlimited search duration
+            """
+            for count, (d, subpath, filename) in enumerate(
+                # NOTE: algorithm returns a generator
+                recursive_file_search(manager, path=root),
+                # keep track of number of items found
+                start=1,
+            ):
+                # apply guard
+                guard(d=d, count=count)
+                # if not blocked by guard log to queue
+                body = {"path": subpath, "filename": filename}
+                contents = json.dumps(body).encode()
+                chan.basic_publish(
+                    exchange=msg_exchange,
+                    routing_key=msg_route,
+                    body=contents,
+                    properties=msg_properties,
+                )
 
         return Ok("success")
 
@@ -96,3 +123,34 @@ def feature(
     except BaseException as err:
         # DEV-NOTE: pass on all other kinds of exceptions
         raise err
+
+
+# ----------------------------------------------------------------
+# AUXILIARY METHODS
+# ----------------------------------------------------------------
+
+
+def guard_limits(
+    *,
+    d: int,
+    count: int,
+    max_depth: int,
+    max_items: int,
+    max_duration: timedelta,
+    t_max: datetime,
+):
+    """
+    Applies guard clauses to terminate search algorithm if limits are breached
+    """
+    # terminate if search takes too long
+    if datetime.now() >= t_max:
+        raise TimeoutError(f"search algorithm terminated - exceeded maximum tolerated duration of {max_duration}")  # fmt: skip
+
+    # terminate if depth exceeds limits
+    if d > max_depth:
+        raise Exception(f"search algorithm terminated - directory depth exceeeded maximum tolerated depth of {max_depth}")  # fmt: skip
+
+    # terminate if number of items exceeds limits
+    count += 1
+    if count > max_items:
+        raise Exception(f"search algorithm terminated - item count exceeededs maximum tolerated value of {max_items}")  # fmt: skip

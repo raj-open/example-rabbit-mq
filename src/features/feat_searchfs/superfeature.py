@@ -37,10 +37,11 @@ def superfeature(
     """
     errors = list[str]()
     n_tot = len(tasks)
+
     for task in tasks:
         result = feature(
             label=task.label,
-            ref_inputs=task.data.inputs,
+            ref=task.data.inputs,
             options=task.options,
         )
 
