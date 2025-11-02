@@ -1,19 +1,50 @@
+# --------------------------------
+# TASK 1
+# --------------------------------
+
 - label: 'First task'
-  options: {}
+  options: &ref_options
+    max-depth: 100
+    max-items: 10_000_000
+    max-duration: 00:30:00
   data:
     inputs:
       location: OS
       path: 'path/to/directory1'
 
+# --------------------------------
+# TASK 2
+# --------------------------------
+
 - label: 'Second task'
-  options: {}
+  options:
+    <<: *ref_options
   data:
     inputs:
       location: OS
       path: 'path/to/directory2'
 
-- label: 'Third task'
-  options: {}
+# --------------------------------
+# TASK 3 - use ignore: true to skip
+# --------------------------------
+
+- label: 'Bad third task'
+  ignore: true
+  options:
+    <<: *ref_options
+  data:
+    inputs:
+      location: OS
+      path: 'path/to/bad directory3'
+
+# --------------------------------
+# TASK 4
+# --------------------------------
+
+- label: 'Fourth task'
+  options:
+    <<: *ref_options
+
   data:
     inputs:
       location: OS

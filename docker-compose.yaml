@@ -186,7 +186,7 @@ services:
         echo "success"
       '
 
-  queue-server:
+  queue-server: &ref_queue-server
     image: local/examplerabbitmq:queue # <- i.e. use this image
     hostname: ${HTTP_HOST_NAME_RABBIT}
 
@@ -198,8 +198,12 @@ services:
       - credentials
 
     volumes:
-      - ${PATH_LOGS_QUEUE}://var/log/rabbitmq:rw
-      - ${PATH_LOGS_QUEUE_STATE}://var/lib/rabbitmq:rw
+      - type: bind
+        source: ${PATH_LOGS_QUEUE}
+        target: //var/log/rabbitmq
+      - type: bind
+        source: ${PATH_LOGS_QUEUE_STATE}
+        target: //var/lib/rabbitmq
 
     ports:
       # HOST-IP:HOST-PORT:CONTAINER (note: uses values in .env)
@@ -213,34 +217,26 @@ services:
       rabbitmq-server
 
   queue-admin:
-    image: local/examplerabbitmq:queue # <- i.e. use this image
-
-    env_file:
-      - .env
-      - .env.docker-vars
-
-    secrets:
-      - credentials
-
-    volumes:
-      - ${PATH_LOGS_QUEUE}://var/log/rabbitmq:rw
-      - ${PATH_LOGS_QUEUE_STATE}://var/lib/rabbitmq:rw
-
-    networks:
-      - default
-
-    tty: true
-    stdin_open: true
+    <<: *ref_queue-server
+    hostname: "admin"
     depends_on:
       - queue-server
+    ports: []
+    networks:
+      - default
+    tty: true
+    stdin_open: true
     command: |-
       bash --login -c '
         source /run/secrets/credentials
         rabbitmqctl --node rabbit@${HTTP_HOST_NAME_RABBIT} list_users
+
         # create admin
         rabbitmqctl --node rabbit@${HTTP_HOST_NAME_RABBIT} delete_user $${HTTP_ADMIN_USER_RABBIT} 2> /dev/null
         rabbitmqctl --node rabbit@${HTTP_HOST_NAME_RABBIT} add_user $${HTTP_ADMIN_USER_RABBIT} $${HTTP_ADMIN_PASSWORD_RABBIT}
+        rabbitmqctl --node rabbit@${HTTP_HOST_NAME_RABBIT} set_permissions -p / $${HTTP_ADMIN_USER_RABBIT} ".*" ".*" ".*"
         rabbitmqctl --node rabbit@${HTTP_HOST_NAME_RABBIT} set_user_tags $${HTTP_ADMIN_USER_RABBIT} administrator
+
         # create guest
         rabbitmqctl --node rabbit@${HTTP_HOST_NAME_RABBIT} delete_user $${HTTP_GUEST_USER_RABBIT} 2> /dev/null
         rabbitmqctl --node rabbit@${HTTP_HOST_NAME_RABBIT} add_user $${HTTP_GUEST_USER_RABBIT} $${HTTP_GUEST_PASSWORD_RABBIT}

@@ -10,6 +10,8 @@ from contextvars import ContextVar
 from pathlib import Path
 
 import toml
+from pika import ConnectionParameters
+from pika import PlainCredentials
 from pydantic import SecretStr
 
 from ..__paths__ import *
@@ -114,6 +116,22 @@ def get_managers() -> dict[EnumFilesSystem, FilesManager]:
         # EnumFilesSystem.SHAREPOINT: get_files_manager(EnumFilesSystem.SHAREPOINT, tz=TIMEZONE),
         # EnumFilesSystem.BLOB_STORAGE: get_files_manager(EnumFilesSystem.BLOB_STORAGE, tz=TIMEZONE),
     }
+
+
+@compute_once
+def get_queue_parameters() -> ConnectionParameters:
+    """
+    Returns connection parameters for queue
+    """
+    # use guest credentials
+    user = http_user_rabbit_guest()
+    pw = http_password_rabbit_guest().get_secret_value()
+    creds = PlainCredentials(username=user, password=pw)
+    # apply to queue
+    host = http_ip()
+    port = http_port_rabbit_queue()
+    settings = ConnectionParameters(host=host, port=port, credentials=creds)  # fmt: skip
+    return settings
 
 
 # ----------------------------------------------------------------

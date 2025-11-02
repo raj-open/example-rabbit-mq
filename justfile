@@ -294,8 +294,8 @@ check-time-matches-cron cron_expr time="*":
     @{{PYVENV_ON}} && {{PYVENV}} -m scripts.cron "{{cron_expr}}" --time "{{time}}"
 
 # Recipe only works if local file scripts/mocks.py exists
-mocks *args:
-    @{{PYVENV_ON}} && {{PYVENV}} -m scripts.mocks
+create-mocks *args:
+    @{{PYVENV_ON}} && {{PYVENV}} -m scripts.mocks {{args}}
 
 # --------------------------------
 # TARGETS: terminate execution

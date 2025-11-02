@@ -2,19 +2,19 @@
 # -*- coding: utf-8 -*-
 
 """
-Submodule for the SEARCH-FS feature
+Algorithms to work with file systems
 """
 
 # ----------------------------------------------------------------
 # IMPORTS
 # ----------------------------------------------------------------
 
-from .superfeature import *
+from .search import *
 
 # ----------------------------------------------------------------
 # EXPORTS
 # ----------------------------------------------------------------
 
 __all__ = [
-    "superfeature",
+    "recursive_file_search",
 ]

@@ -15,7 +15,6 @@ from pathlib import Path
 from pydantic import AwareDatetime
 
 from ...._core.constants import *
-from ...._core.utils.code import *
 from ...._core.utils.time import *
 from ...generated.application import MetaData
 
@@ -244,7 +243,6 @@ class OSFilesManagerFile:
         t = datetime.fromtimestamp(meta.st_mtime)
         return add_timezone(t, tz=self._timezone)
 
-    @make_lazy
     def get_meta_data(self) -> MetaData:
         """
         Gets bundled meta data associated to file.
@@ -291,7 +289,6 @@ class OSFilesManagerFolder:
     _manager: OSFilesManager
     _path: str
     _timezone: timezone | None
-    _filenames: list[str] | None
 
     def __init__(
         self,
@@ -305,7 +302,6 @@ class OSFilesManagerFolder:
         self._manager = manager
         self._path = path
         self._timezone = tz
-        self._filenames = None
         return
 
     @property
@@ -326,44 +322,72 @@ class OSFilesManagerFolder:
     def name(self) -> str:
         return os.path.basename(self._path)
 
-    @property
-    def subfolders(self) -> list[OSFilesManagerFolder]:
+    def get_file(self, name: str, /) -> OSFilesManagerFile:
+        """
+        Gets file object by name within folder
+        """
+        path = Path(self._path, name).as_posix()
+        file = self._manager.get_file(path)
+        return file
+
+    def get_filenames(self) -> list[str]:
+        """
+        Get all filenames in folder
+        """
+        names = os.listdir(self._path)
+        paths = [Path(self.path, name).as_posix() for name in names]
+        filenames = [name for name, path in zip(names, paths) if Path(path).is_file()]
+        return filenames
+
+    def get_files(self) -> list[OSFilesManagerFile]:
+        """
+        Gets all file objects in folder
+        """
+        filenames = self.get_filenames()
+        files = [self.get_file(filename) for filename in filenames]
+        return files
+
+    def get_subfolder(self, name: str, /) -> OSFilesManagerFolder:
+        """
+        Gets subfolder object by name within folder
+        """
         tz = self._timezone
+        path = Path(self._path, name).as_posix()
+        folder = OSFilesManagerFolder(self._manager, path=path, tz=tz)
+        return folder
+
+    def get_subfolder_paths(self) -> list[str]:
+        """
+        Gets all paths to subfolders within folder
+        """
         names = os.listdir(self._path)
         paths = [Path(self._path, name).as_posix() for name in names]
         paths = [path for path in paths if Path(path).is_dir()]
-        return [OSFilesManagerFolder(self._manager, path=path, tz=tz) for path in paths]
+        return paths
 
-    def get_subfolder(self, name: str) -> OSFilesManagerFolder:
-        return self._manager.get_folder(Path(self._path, name).as_posix())
-
-    @property
-    def files(self) -> list[OSFilesManagerFile]:
+    def get_subfolders(self) -> list[str]:
+        """
+        Gets all subfolder objects within folder
+        """
         tz = self._timezone
-        names = os.listdir(self._path)
-        paths = [Path(self._path, name).as_posix() for name in names]
-        paths = [path for path in paths if Path(path).is_file()]
-        return [OSFilesManagerFile(path=path, tz=tz) for path in paths]
+        get_folder = lambda path: OSFilesManagerFolder(self._manager, path=path, tz=tz)
+        paths = self.get_subfolder_paths()
+        folders = list(map(get_folder, paths))
+        return folders
 
-    @property
-    def filenames(self) -> list[str]:
-        names = os.listdir(self._path)
-        paths = [Path(self.path, name).as_posix() for name in names]
-        self._filenames = [name for name, path in zip(names, paths) if Path(path).is_file()]
-        return self._filenames
+    def has_file(self, file: OSFilesManagerFile, /) -> bool:
+        """
+        Checks if file of given name exists in folder
+        """
+        filenames = self.get_filenames()
+        return file.filename in filenames
 
-    def has_file(self, file: OSFilesManagerFile) -> bool:
-        return file.filename in self.filenames
-
-    def get_file(self, name: str) -> OSFilesManagerFile:
-        return self._manager.get_file(Path(self._path, name).as_posix())
-
-    @make_lazy
     def get_files_meta_data(self) -> list[MetaData]:
         """
         Gets a list of metadata associated to files
         """
-        return [file.get_meta_data() for file in self.files]
+        files = self.get_files()
+        return [file.get_meta_data() for file in files]
 
     def write_bytes(
         self,
@@ -398,9 +422,9 @@ class OSFilesManagerFolder:
         Removes all contents of current folder
         """
         success = True
-        for file in self.files:
+        for file in self.get_files():
             success = success and file.delete_self()
-        for subfolder in self.subfolders:
+        for subfolder in self.get_subfolders():
             success = success and subfolder.delete_self()
         return success
 

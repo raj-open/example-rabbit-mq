@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+from datetime import timedelta
 from enum import Enum
 from typing import Any
 
@@ -58,6 +59,19 @@ class RequestTaskOptions(BaseModel):
     model_config = ConfigDict(
         extra="allow",
         populate_by_name=True,
+    )
+    max_depth: int = Field(
+        default=50, alias="max-depth", description="Limits the search depth"
+    )
+    max_items: int = Field(
+        default=1000000,
+        alias="max-items",
+        description="Limits the amount of items that can be found",
+    )
+    max_duration: timedelta = Field(
+        ...,
+        alias="max-duration",
+        description="Limits the amount of time spent for a search",
     )
 
 
@@ -171,6 +185,7 @@ class RequestTask(BaseModel):
         populate_by_name=True,
     )
     label: str = Field(..., description="Label of task")
+    ignore: bool = False
     options: RequestTaskOptions
     data: RequestTaskData
 
