@@ -191,9 +191,9 @@ label: 'Mock example'
 
 # apply some generous limits
 options:
-  max-depth: 100
-  max-count: 10_000_000
-  max-time: 00:05:00
+  max-depth: 100 # limits depth of folder structure
+  max-items: 1_000_000 # limits number of items that can be logged
+  max-duration: 00:05:00 # limits maximum computation time
 
 data:
   # the locaiton of the mock directory
