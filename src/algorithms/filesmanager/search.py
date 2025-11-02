@@ -61,7 +61,7 @@ def recursive_file_search(
     """
     # create and initialise queue
     q = deque[tuple[int, str | list[str]]]()
-    q.append[(0, path)]
+    q.append((0, path))
 
     # keep alive as long as queue not empty
     while (L := len(q)) > 0:
@@ -101,6 +101,10 @@ def recursive_file_search(
         # process subfolders - create new tasks
         if len(paths := folder.get_subfolder_paths()) > 0:
             q.append((d + 1, paths))
+
+    # DEV-NOTE: ensures that something is yielded for the empty case
+    empty = list[tuple[int, str, str]]()
+    yield from empty
 
 
 # ----------------------------------------------------------------
