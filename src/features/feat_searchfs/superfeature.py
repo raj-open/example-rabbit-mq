@@ -51,7 +51,7 @@ def superfeature(
     Establish connection to message queue
     """
 
-    with ChannelContext(settings=settings) as chan:
+    with ChannelContext(settings) as chan:
         # FIXME: publication to exchages fails when msg_exchange is not ""
         # chan.exchange_declare(exchange=msg_exchange, exchange_type="direct")
 
