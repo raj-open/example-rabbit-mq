@@ -1,9 +1,11 @@
+[![Rabbit MQ](https://img.shields.io/badge/-RabbitMQ-FF6600?style=flat&logo=rabbitmq&logoColor=white)](https://www.rabbitmq.com)
 [![Python version: 3.14](https://img.shields.io/badge/python%20version-3.14-1464b4.svg)](https://www.python.org)
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 
 [![qa manual:main](https://github.com/raj-open/example-rabbit-mq/actions/workflows/manual.yaml/badge.svg?branch=main)](https://github.com/raj-open/example-rabbit-mq/actions/workflows/manual.yaml)
 [![qa manual:staging](https://github.com/raj-open/example-rabbit-mq/actions/workflows/manual.yaml/badge.svg?branch=staging)](https://github.com/raj-open/example-rabbit-mq/actions/workflows/manual.yaml)
 
+[![qa auto:main](https://github.com/raj-open/example-rabbit-mq/actions/workflows/auto.yaml/badge.svg?branch=main)](https://github.com/raj-open/example-rabbit-mq/actions/workflows/auto.yaml)
 [![qa auto:staging](https://github.com/raj-open/example-rabbit-mq/actions/workflows/auto.yaml/badge.svg?branch=staging)](https://github.com/raj-open/example-rabbit-mq/actions/workflows/auto.yaml)
 [![qa auto:current](https://github.com/raj-open/example-rabbit-mq/actions/workflows/auto.yaml/badge.svg)](https://github.com/raj-open/example-rabbit-mq/actions/workflows/auto.yaml)
 
@@ -189,7 +191,6 @@ Fill in `setup/requests.yaml` as follows:
 ```yaml
 label: 'Mock example'
 
-# apply some generous limits
 options:
   # skip-empty: true # false (default) => includes empty files; true => skips them
   max-depth: 100 # limits depth of folder structure
