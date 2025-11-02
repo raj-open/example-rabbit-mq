@@ -38,9 +38,15 @@ def parse_tasks(payload: RequestsPayload, /) -> list[RequestTask]:
     """
     Given a payload retuns the list of tasks it encodes
     """
+    # parse either list or single item as list
     match payload.root:
-        case list() as tasks:
-            return tasks
+        case list() as x:
+            tasks = x
 
         case _ as task:
-            return [task]
+            tasks = [task]
+
+    # filter out tasks to be ignored
+    tasks = [task for task in tasks if not task.ignore]
+
+    return tasks

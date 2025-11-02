@@ -74,7 +74,7 @@ which assumes that the .env file has been correctly set up.
 One can then either call
 
 ```bash
-just run-server
+just start-server
 ```
 
 to start the server
@@ -82,9 +82,9 @@ to start the server
 or else use the CLI:
 
 ```bash
-just run-cli --help # displays usage
-just run-cli version # displays version
-just run-cli SEARCH-FS # runs the main feature
+just run --help # displays usage
+just run version # displays version
+just run SEARCH-FS # runs the main feature
 ```
 
 ### Usage with docker ###
@@ -162,3 +162,75 @@ Password: ${HTTP_GUEST_PASSWORD_RABBIT}
 1. Start the queue (see [above](#activationdeactivation-of-queue)).
 
 2. Use the CLI commands or the API with/without docker (see [above](#usage-of-main-application)).
+
+## Testing ##
+
+### Mock data ###
+
+To generate mock data one may call for examples
+
+```bash
+rm -rf "data/example"
+just create-mocks \
+    --path "data/example" \
+    --max-depth 10 \
+    --max-folders 100 \
+    --max-files 1000
+```
+
+which creates a fresh relative directory `data/examples`,
+consisting of at most roughly 1000 files and 100 folders,
+and not exceeding a depth of 10.
+
+### Request ###
+
+Fill in `setup/requests.yaml` as follows:
+
+```yaml
+label: 'Mock example'
+
+# apply some generous limits
+options:
+  max-depth: 100
+  max-count: 10_000_000
+  max-time: 00:05:00
+
+data:
+  # the locaiton of the mock directory
+  inputs:
+    location: OS
+    path: 'data/example'
+```
+
+### Execution ###
+
+1. Start the queue (see [above](#activationdeactivation-of-queue)).
+
+2. Ensure that the queue-users are registered (see [above](#set-up-users)).
+
+3. Use the CLI commands or the API with/without docker (see [above](#usage-of-main-application)).
+
+4. Run the feature:
+
+    - For the CLI option, call
+
+        ```bash
+        just run SEARCH-FS
+        ```
+
+    - For the FastApi options (with or without docker),
+        make a POST-call (e.g. in [Postman](https://www.postman.com))
+        against the endpoint `/feature/search-fs`
+        using the JSON-body
+
+        ```json
+        {
+            "ref": {
+                "location": "OS",
+                "path": "setup/requests.yaml"
+            }
+        }
+        ```
+
+        The file reference in this body can of course be a json
+        and located anywhere on your system.

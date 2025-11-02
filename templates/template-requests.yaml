@@ -2,7 +2,10 @@
 label: 'Some label'
 
 # NOTE: not yet implemented
-options: {}
+options:
+  max-depth: 100
+  max-items: 10_000_000
+  max-duration: 00:30:00
 
 # The main request
 data:

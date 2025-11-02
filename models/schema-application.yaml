@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  version: "0.1.0"
+  version: "0.2.0"
   title: General models for application
   description: |-
     Schemata for data models in application - configs, enums, etc.
@@ -133,6 +133,9 @@ components:
           description: |-
             Label of task
           type: string
+        ignore:
+          type: boolean
+          default: false
         options:
           $ref: "#/components/schemas/RequestTaskOptions"
         data:
@@ -144,7 +147,25 @@ components:
 
         NOTE: not yet implemented
       type: object
+      required:
+        - max-duration
       additionalProperties: true
+      properties:
+        max-depth:
+          description: |-
+            Limits the search depth
+          type: integer
+          default: 50
+        max-items:
+          description: |-
+            Limits the amount of items that can be found
+          type: integer
+          default: 1_000_000
+        max-duration:
+          description: |-
+            Limits the amount of time spent for a search
+          type: string
+          format: duration
 
     RequestTaskData:
       description: |-

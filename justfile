@@ -217,11 +217,11 @@ build-docs:
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 # run in cli mode
-run-cli *args:
+run *args:
     @{{PYVENV_ON}} && {{PYVENV}} -m src.cli {{args}}
 
 # run via fast api
-run-server env_path=".env" log_path="${PATH_LOGS}":
+start-server env_path=".env" log_path="${PATH_LOGS}":
     @{{PYVENV_ON}} && {{PYVENV}} -m src.api \
         --env "{{env_path}}" \
         --log "{{log_path}}"
@@ -294,8 +294,8 @@ check-time-matches-cron cron_expr time="*":
     @{{PYVENV_ON}} && {{PYVENV}} -m scripts.cron "{{cron_expr}}" --time "{{time}}"
 
 # Recipe only works if local file scripts/mocks.py exists
-mocks *args:
-    @{{PYVENV_ON}} && {{PYVENV}} -m scripts.mocks
+create-mocks *args:
+    @{{PYVENV_ON}} && {{PYVENV}} -m scripts.mocks {{args}}
 
 # --------------------------------
 # TARGETS: terminate execution
