@@ -83,12 +83,18 @@ class OSFilesManager:
             return []
 
     def get_file(self, *path: str) -> OSFilesManagerFile:
+        """
+        Use files manager to get file by full path
+        """
         tz = self._timezone
         path_full = Path(*path).as_posix() or "."
         path_full = path_full.strip().rstrip(r"\/")
         return OSFilesManagerFile(path=path_full, tz=tz)
 
     def get_folder(self, *path: str) -> OSFilesManagerFolder:
+        """
+        Use files manager to get folder by full path
+        """
         tz = self._timezone
         path_full = Path(*path).as_posix() or "."
         path_full = path_full.strip().rstrip(r"\/")
@@ -168,6 +174,9 @@ class OSFilesManagerFile:
 
     @property
     def path(self) -> str:
+        """
+        Gets path locator to file
+        """
         return self._path
 
     @property
@@ -202,6 +211,9 @@ class OSFilesManagerFile:
 
     @property
     def size(self) -> int:
+        """
+        Gets meta attribute - size of file
+        """
         meta = os.stat(self._path)
         return meta.st_size
 
@@ -227,6 +239,9 @@ class OSFilesManagerFile:
 
     @property
     def date_created(self) -> AwareDatetime | None:
+        """
+        Gets meta attribute - date of creation
+        """
         meta = os.stat(self._path)
 
         try:
@@ -239,6 +254,9 @@ class OSFilesManagerFile:
 
     @property
     def date_modified(self) -> AwareDatetime | None:
+        """
+        Gets meta attribute - date of (last) modification
+        """
         meta = os.stat(self._path)
         t = datetime.fromtimestamp(meta.st_mtime)
         return add_timezone(t, tz=self._timezone)
@@ -316,11 +334,25 @@ class OSFilesManagerFolder:
 
     @property
     def path(self) -> str:
+        """
+        Gets path locator to folder
+        """
         return self._path
 
     @property
     def name(self) -> str:
+        """
+        Gets name identifier of folder
+        """
         return os.path.basename(self._path)
+
+    @property
+    def size(self) -> int:
+        """
+        Gets meta attribute - size of folder
+        """
+        meta = os.stat(self._path)
+        return meta.st_size
 
     def get_file(self, name: str, /) -> OSFilesManagerFile:
         """

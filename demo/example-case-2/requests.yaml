@@ -1,0 +1,12 @@
+label: 'Demo Case 2'
+
+options:
+  skip-empty: false
+  max-depth: 100
+  max-items: 10_000_000
+  max-duration: 00:30:00
+
+data:
+  inputs:
+    location: OS
+    path: 'demo/example-case-2/data'

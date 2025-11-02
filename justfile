@@ -297,6 +297,9 @@ check-time-matches-cron cron_expr time="*":
 create-mocks *args:
     @{{PYVENV_ON}} && {{PYVENV}} -m scripts.mocks {{args}}
 
+demo name:
+    @just run SEARCH-FS --requests "demo/{{name}}/requests.yaml"
+
 # --------------------------------
 # TARGETS: terminate execution
 # --------------------------------

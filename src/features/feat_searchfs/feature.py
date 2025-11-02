@@ -12,13 +12,13 @@ from datetime import timedelta
 from functools import partial
 
 from pika import BasicProperties
-from pika import BlockingConnection
 from safetywrap import Err
 from safetywrap import Ok
 from safetywrap import Result
 
 from ..._core.logging import *
 from ...algorithms.filesmanager import *
+from ...models.apis.queue import *
 from ...models.application import *
 from ...models.filesmanager import *
 from ...models.internal.errors import *
@@ -76,8 +76,7 @@ def feature(
         msg_properties = BasicProperties(type="info")
 
         settings = config.get_queue_parameters()
-        with BlockingConnection(settings) as connection:
-            chan = connection.channel()
+        with ChannelContext(settings=settings) as chan:
             # FIXME: publication to exchages fails
             # chan.exchange_declare(exchange=msg_exchange, exchange_type="direct")
             chan.queue_declare(queue=msg_route)
@@ -92,12 +91,17 @@ def feature(
             """
             for count, (d, subpath, filename) in enumerate(
                 # NOTE: algorithm returns a generator
-                recursive_file_search(manager, path=root),
+                recursive_file_search(
+                    manager,
+                    path=root,
+                    skip_empty=options.skip_empty,
+                ),
                 # keep track of number of items found
                 start=1,
             ):
                 # apply guard
                 guard(d=d, count=count)
+
                 # if not blocked by guard log to queue
                 body = {"path": subpath, "filename": filename}
                 contents = json.dumps(body).encode()
