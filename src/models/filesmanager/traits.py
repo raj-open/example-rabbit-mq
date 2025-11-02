@@ -240,6 +240,13 @@ class FilesManagerFolder(Protocol):
         """
         ...
 
+    @property
+    def size(self) -> int:
+        """
+        Gets meta attribute - size of folder
+        """
+        ...
+
     def get_file(self, name: str, /) -> FilesManagerFile:
         """
         Gets file object by name within folder
