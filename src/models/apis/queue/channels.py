@@ -12,6 +12,7 @@ from pika import ConnectionParameters
 from pika.adapters.blocking_connection import BlockingChannel
 from pydantic import BaseModel
 from pydantic import ConfigDict
+from pydantic import Field
 from pydantic import SkipValidation
 
 # ----------------------------------------------------------------
@@ -38,7 +39,8 @@ class ChannelStruct(BaseModel):
     )
 
     settings: SkipValidation[ConnectionParameters]
-    channel: SkipValidation[BlockingChannel] | None = None
+    connection: SkipValidation[BlockingConnection] | None = Field(default=None, init=False)
+    channel: SkipValidation[BlockingChannel] | None = Field(default=None, init=False)
 
 
 class ChannelContext(ChannelStruct):
@@ -47,12 +49,17 @@ class ChannelContext(ChannelStruct):
     """
 
     def __enter__(self) -> BlockingChannel:
-        with BlockingConnection(self.settings) as connection:
-            self.channel = connection.channel()
-            return self.channel
+        self.connection = BlockingConnection(self.settings)
+        self.channel = self.connection.channel()
+        return self.channel
 
     def __exit__(self, *_, **__):
         logging.info("gracefully terminating channel")
-        if self.channel is not None:
+
+        if isinstance(self.channel, BlockingChannel):
             self.channel.close()
+
+        if isinstance(self.connection, BlockingConnection):
+            self.connection.close()
+
         return
