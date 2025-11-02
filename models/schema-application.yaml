@@ -151,6 +151,11 @@ components:
         - max-duration
       additionalProperties: true
       properties:
+        skip-empty:
+          description: |-
+            Whether to only include non-empty files
+          type: boolean
+          default: false
         max-depth:
           description: |-
             Limits the search depth

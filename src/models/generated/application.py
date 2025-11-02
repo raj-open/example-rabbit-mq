@@ -60,6 +60,11 @@ class RequestTaskOptions(BaseModel):
         extra="allow",
         populate_by_name=True,
     )
+    skip_empty: bool = Field(
+        default=False,
+        alias="skip-empty",
+        description="Whether to only include non-empty files",
+    )
     max_depth: int = Field(
         default=50, alias="max-depth", description="Limits the search depth"
     )
