@@ -1,0 +1,6 @@
+"Id";"Customer.Id";"Article";"Qty";"Cost";"TotalCost";"Status";"Checked"
+0;382;"A19038012";10;0.50;50.00;COMPLETED;true
+1;103;"B18031017";8;4.57;36.56;COMPLETED;true
+8;;"A63278732";;10.17;;ERROR;false
+9;;"A63278732";20;10.17;203.4;CANCELLED;false
+13;489;"Z20009991";3;0.10;0.30;PENDING;true

@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  version: "0.2.1"
+  version: "0.3.0"
   title: General models for application
   description: |-
     Schemata for data models in application - configs, enums, etc.
@@ -151,6 +151,11 @@ components:
         - max-duration
       additionalProperties: true
       properties:
+        skip-empty:
+          description: |-
+            Whether to only include non-empty files
+          type: boolean
+          default: false
         max-depth:
           description: |-
             Limits the search depth

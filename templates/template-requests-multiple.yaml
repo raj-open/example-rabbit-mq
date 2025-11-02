@@ -4,6 +4,7 @@
 
 - label: 'First task'
   options: &ref_options
+    # skip-empty: true # default is false
     max-depth: 100
     max-items: 10_000_000
     max-duration: 00:30:00

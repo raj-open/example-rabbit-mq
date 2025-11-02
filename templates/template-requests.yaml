@@ -1,8 +1,9 @@
-# For logging purposes - a recognisable label for the task
+# For logging purposes - a recognisable label for the task which will be used as the queue name
 label: 'Some label'
 
-# NOTE: not yet implemented
+# Special options and safeguards
 options:
+  # skip-empty: true # default is false
   max-depth: 100
   max-items: 10_000_000
   max-duration: 00:30:00
@@ -10,5 +11,7 @@ options:
 # The main request
 data:
   inputs:
-    location: OS # enum for file system
+    # enum for file system; later "OS", "SHAREPOINT", "BLOB-STORAGE" will be available
+    location: OS
+    # directory to be recursively searched
     path: 'relative/or absolute path to directory'
