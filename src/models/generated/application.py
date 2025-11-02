@@ -185,6 +185,7 @@ class RequestTask(BaseModel):
         populate_by_name=True,
     )
     label: str = Field(..., description="Label of task")
+    ignore: bool = False
     options: RequestTaskOptions
     data: RequestTaskData
 

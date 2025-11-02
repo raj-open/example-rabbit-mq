@@ -4,6 +4,7 @@
 | Name | Type | Description | Notes |
 |------------ | ------------- | ------------- | -------------|
 | **label** | **String** | Label of task | [default to null] |
+| **ignore** | **Boolean** |  | [optional] [default to false] |
 | **options** | [**RequestTaskOptions**](RequestTaskOptions.md) |  | [default to null] |
 | **data** | [**RequestTaskData**](RequestTaskData.md) |  | [default to null] |
 

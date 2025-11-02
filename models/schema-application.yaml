@@ -133,6 +133,9 @@ components:
           description: |-
             Label of task
           type: string
+        ignore:
+          type: boolean
+          default: false
         options:
           $ref: "#/components/schemas/RequestTaskOptions"
         data:
