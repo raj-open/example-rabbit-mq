@@ -17,6 +17,8 @@ from typing import Union
 # ----------------------------------------------------------------
 
 __all__ = [
+    "JSON_TYPE",
+    "NOTES",
     "ExceptionWithData",
     "convert_notes_to_exception",
 ]
