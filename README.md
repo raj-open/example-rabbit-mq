@@ -5,13 +5,12 @@
 [![qa manual:main](https://github.com/raj-open/example-rabbit-mq/actions/workflows/manual.yaml/badge.svg?branch=main)](https://github.com/raj-open/example-rabbit-mq/actions/workflows/manual.yaml)
 [![qa manual:staging](https://github.com/raj-open/example-rabbit-mq/actions/workflows/manual.yaml/badge.svg?branch=staging)](https://github.com/raj-open/example-rabbit-mq/actions/workflows/manual.yaml)
 
-[![qa auto:main](https://github.com/raj-open/example-rabbit-mq/actions/workflows/auto.yaml/badge.svg?branch=main)](https://github.com/raj-open/example-rabbit-mq/actions/workflows/auto.yaml)
 [![qa auto:staging](https://github.com/raj-open/example-rabbit-mq/actions/workflows/auto.yaml/badge.svg?branch=staging)](https://github.com/raj-open/example-rabbit-mq/actions/workflows/auto.yaml)
 [![qa auto:current](https://github.com/raj-open/example-rabbit-mq/actions/workflows/auto.yaml/badge.svg)](https://github.com/raj-open/example-rabbit-mq/actions/workflows/auto.yaml)
 
 # Example Rabbit MQ #
 
-This repository provides an example implementation of a tool with a single feature `SEARCH-FILESYSTEM`,
+This repository provides an example implementation of a tool with a single feature `SEARCH-FS`,
 which upon performs the following:
 
 - given a request payload;
@@ -28,6 +27,10 @@ which upon performs the following:
 - [justfile tool](https://github.com/casey/just/releases) version `^1.4.*`
 
 - [docker + CLI tools](https://docs.docker.com/engine/install)
+
+- (optional) [Postman](https://www.postman.com).
+    Cf. the [wiki](https://github.com/raj-open/example-rabbit-mq/wiki/Postman-Setup)
+    for an prepared environment + collection.
 
 NOTE: We primarily use Docker for local testing, in particular to spin up a Rabbit MQ server.
 
@@ -192,6 +195,7 @@ Fill in `setup/requests.yaml` as follows:
 label: 'Mock example'
 
 options:
+  reset-queue: true # default is false - whether to clear (sub)queue for task at start of run
   # skip-empty: true # false (default) => includes empty files; true => skips them
   max-depth: 100 # limits depth of folder structure
   max-items: 1_000_000 # limits number of items that can be logged

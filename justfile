@@ -300,6 +300,9 @@ create-mocks *args:
 demo name:
     @just run SEARCH-FS --requests "demo/{{name}}/requests.yaml"
 
+demos:
+    @just demo "example-all"
+
 # --------------------------------
 # TARGETS: terminate execution
 # --------------------------------

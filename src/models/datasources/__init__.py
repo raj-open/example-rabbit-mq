@@ -16,4 +16,5 @@ __all__ = [
     "AnyDataFrame",
     "AnyDictionary",
     "AnyEntity",
+    "serialise_any_element",
 ]

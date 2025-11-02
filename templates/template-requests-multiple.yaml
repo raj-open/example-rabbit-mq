@@ -4,7 +4,8 @@
 
 - label: 'First task'
   options: &ref_options
-    # skip-empty: true # default is false
+    reset-queue: true # default is false - whether to clear (sub)queue for task at start of run
+    # skip-empty: true # false (default) => includes empty files; true => skips them
     max-depth: 100
     max-items: 10_000_000
     max-duration: 00:30:00
