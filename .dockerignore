@@ -43,18 +43,6 @@
 !/tests/*/resources/**/
 !/tests/*/resources/**/MOCK*
 
-!/demo
-!/demo/README.md
-!/demo/example*
-!/demo/example*/data
-!/demo/example*/data/**/mock*/
-!/demo/example*/data/**/*.csv
-!/demo/example*/data/**/*.md
-!/demo/example*/data/**/*.txt
-!/demo/example*/data/**/*.log
-!/demo/example*/README.md
-!/demo/example*/requests.yaml
-
 # ----------------------------------------------------------------
 # FORCE REMOVE
 # ----------------------------------------------------------------
