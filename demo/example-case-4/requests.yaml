@@ -1,6 +1,7 @@
 label: 'Demo Case 4'
 
 options:
+  reset-queue: true
   skip-empty: false
   max-depth: 100
   max-items: 10_000_000

@@ -151,6 +151,11 @@ components:
         - max-duration
       additionalProperties: true
       properties:
+        reset-queue:
+          description: |-
+            Whether to clear queue before execution
+          type: boolean
+          default: false
         skip-empty:
           description: |-
             Whether to only include non-empty files

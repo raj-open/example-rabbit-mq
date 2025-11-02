@@ -192,6 +192,7 @@ Fill in `setup/requests.yaml` as follows:
 label: 'Mock example'
 
 options:
+  reset-queue: true # default is false - whether to clear (sub)queue for task at start of run
   # skip-empty: true # false (default) => includes empty files; true => skips them
   max-depth: 100 # limits depth of folder structure
   max-items: 1_000_000 # limits number of items that can be logged
