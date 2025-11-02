@@ -60,6 +60,11 @@ class RequestTaskOptions(BaseModel):
         extra="allow",
         populate_by_name=True,
     )
+    reset_queue: bool = Field(
+        default=False,
+        alias="reset-queue",
+        description="Whether to clear queue before execution",
+    )
     skip_empty: bool = Field(
         default=False,
         alias="skip-empty",
