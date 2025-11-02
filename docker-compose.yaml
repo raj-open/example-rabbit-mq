@@ -127,12 +127,10 @@ services:
     #   - ./pyproject.toml://home/basicuser/app/pyproject.toml:ro
     #   - ./justfile://home/basicuser/app/justfile:ro
 
+    networks: [default]
     ports:
       # HOST-IP:HOST-PORT:CONTAINER (note: uses values in .env)
       - ${DOCKER_HOST_IP}:${DOCKER_HOST_PORT}:${DOCKER_CONTAINER_PORT}
-
-    tty: true
-    stdin_open: true
 
     healthcheck:
       # time before first healthcheck
@@ -149,6 +147,8 @@ services:
           curl -f "${HTTP_IP}:${HTTP_PORT}/ping" || exit 1
         '
 
+    tty: false
+    stdin_open: true
     user: basicuser
     # restart: unless-stopped
     restart: no
@@ -156,7 +156,7 @@ services:
     command: |-
       bash --login -c '
         source /run/secrets/credentials
-        just run-server
+        just start-server
       '
 
   # --------------------------------
@@ -205,11 +205,12 @@ services:
         source: ${PATH_LOGS_QUEUE_STATE}
         target: //var/lib/rabbitmq
 
+    networks: [default]
     ports:
       # HOST-IP:HOST-PORT:CONTAINER (note: uses values in .env)
-      # communication
+      # queue communication
       - ${DOCKER_HOST_IP}:${DOCKER_HOST_PORT_RABBIT_QUEUE}:${DOCKER_CONTAINER_PORT_RABBIT_QUEUE}
-      # admin web
+      # queue admin
       - ${DOCKER_HOST_IP}:${DOCKER_HOST_PORT_RABBIT_WEB}:${DOCKER_CONTAINER_PORT_RABBIT_WEB}
 
     # restart: always
@@ -221,9 +222,8 @@ services:
     hostname: "admin"
     depends_on:
       - queue-server
+    networks: [default]
     ports: []
-    networks:
-      - default
     tty: true
     stdin_open: true
     command: |-

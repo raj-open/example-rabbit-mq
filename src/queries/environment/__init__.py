@@ -16,6 +16,7 @@ from .rabbit import *
 
 __all__ = [
     "add_environment",
+    "get_docker_network",
     "get_environment",
     "get_http_host_name_rabbit",
     "get_http_ip",

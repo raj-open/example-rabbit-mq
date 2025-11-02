@@ -74,7 +74,7 @@ which assumes that the .env file has been correctly set up.
 One can then either call
 
 ```bash
-just run-server
+just start-server
 ```
 
 to start the server
@@ -82,9 +82,9 @@ to start the server
 or else use the CLI:
 
 ```bash
-just run-cli --help # displays usage
-just run-cli version # displays version
-just run-cli SEARCH-FS # runs the main feature
+just run --help # displays usage
+just run version # displays version
+just run SEARCH-FS # runs the main feature
 ```
 
 ### Usage with docker ###
@@ -215,7 +215,7 @@ data:
     - For the CLI option, call
 
         ```bash
-        just run-cli SEARCH-FS
+        just run SEARCH-FS
         ```
 
     - For the FastApi options (with or without docker),

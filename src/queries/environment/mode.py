@@ -26,6 +26,7 @@ def get_path_logs(
     path: str,
     env: dict[str, str],
     # end decorator args
+    default: str = "logs",
 ) -> str:
-    value = env.get("PATH_LOGS", ".session")
+    value = env.get("PATH_LOGS", default)
     return value
