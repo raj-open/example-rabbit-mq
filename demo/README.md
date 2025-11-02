@@ -35,6 +35,35 @@ For ease of use one can also run the demos as follows:
     >
     > to run all the examples.
 
+## Alternative via FastApi ##
+
+In step 2 one can alternatively start the FastApi server
+(via `just start-server` or `just docker-start-server`)
+and send a POST-request to the endpoing `/feature/search-fs`
+with JSON-body e.g.
+
+```json
+{
+    "ref": {
+      "location": "OS",
+      "path": "demo/example-case-1/requests.yaml"
+    }
+}
+```
+
+to run `SEARCH-FS` against `example-case-1` or
+
+```json
+{
+    "ref": {
+      "location": "OS",
+      "path": "demo/example-all/requests.yaml"
+    }
+}
+```
+
+to run `SEARCH-FS` against all cases.
+
 ## Results ##
 
 The current demos should result in the following:
