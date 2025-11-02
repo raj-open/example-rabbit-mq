@@ -25,6 +25,9 @@ For ease of use one can also run the demos as follows:
 
     where `{name}` is the name of the subfolder, e.g. `"example-case-1"`.
 
+> [!TIP]
+> Call `just demo "example-all" to run all the examples.
+
 ## Results ##
 
 The current demos should result in the following:

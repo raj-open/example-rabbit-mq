@@ -1,0 +1,6 @@
+- !include "demo/example-case-1/requests.yaml"
+- !include "demo/example-case-2/requests.yaml"
+- !include "demo/example-case-3/requests.yaml"
+- !include "demo/example-case-4/requests.yaml"
+- !include "demo/example-empty/requests.yaml"
+- !include "demo/example-flat/requests.yaml"
