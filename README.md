@@ -11,7 +11,7 @@
 
 # Example Rabbit MQ #
 
-This repository provides an example implementation of a tool with a single feature `SEARCH-FILESYSTEM`,
+This repository provides an example implementation of a tool with a single feature `SEARCH-FS`,
 which upon performs the following:
 
 - given a request payload;
