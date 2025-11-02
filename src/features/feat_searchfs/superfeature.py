@@ -61,7 +61,8 @@ def superfeature(
 
             # ensure case has its own route and that it is cleared
             chan.queue_declare(queue=msg_route)
-            chan.queue_purge(queue=msg_route)
+            if task.options.reset_queue:
+                chan.queue_purge(queue=msg_route)
 
             """
             Run feature with error handling
