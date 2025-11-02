@@ -151,6 +151,5 @@ def guard_limits(
         raise Exception(f"search algorithm terminated - directory depth exceeeded maximum tolerated depth of {max_depth}")  # fmt: skip
 
     # terminate if number of items exceeds limits
-    count += 1
     if count > max_items:
         raise Exception(f"search algorithm terminated - item count exceeededs maximum tolerated value of {max_items}")  # fmt: skip
