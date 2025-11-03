@@ -102,7 +102,7 @@ services:
     volumes:
       - type: bind
         source: ${PATH_LOGS}
-        target: //home/basicuser/app/logs
+        target: //home/basicuser/app/${PATH_LOGS}
       - ./demo://home/basicuser/app/demo:ro
       - ./data://home/basicuser/app/data:rw
       - ./setup://home/basicuser/app/setup:ro
@@ -111,7 +111,7 @@ services:
     # volumes:
     #   - type: bind
     #     source: ${PATH_LOGS}
-    #     target: //home/basicuser/app/logs
+    #     target: //home/basicuser/app/${PATH_LOGS}
     #   - ./demo://home/basicuser/app/demo:ro
     #   - ./data://home/basicuser/app/data:rw
     #   - ./setup://home/basicuser/app/setup:ro
