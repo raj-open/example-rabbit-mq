@@ -58,14 +58,6 @@ services:
       <<: *ref_build
       target: stage-build
 
-    tty: true
-    stdin_open: true
-    user: basicuser
-    command: |-
-      bash --login -c '
-        echo "success"
-      '
-
   qa:
     image: local/examplerabbitmq:build # <- i.e. use this image
     env_file:
@@ -79,7 +71,9 @@ services:
     user: basicuser
     command: |-
       bash --login -c '
+        # ensure secrets are available to environment
         source /run/secrets/credentials
+        # run qa steps
         just prettify || exit 1
         just tests-unit || exit 1
       '
@@ -149,7 +143,9 @@ services:
     # entrypoint: "//home/basicuser/app/scripts/entrypoint.sh"
     command: |-
       bash --login -c '
+        # ensure secrets are available to environment
         source /run/secrets/credentials
+        # start server
         just start-server
       '
 
@@ -176,7 +172,7 @@ services:
     tty: true
     stdin_open: true
     command: |-
-      bash --login -c '
+      bash -c '
         echo "success"
       '
 
@@ -192,12 +188,16 @@ services:
       - credentials
 
     volumes:
+      # general logging
       - type: bind
         source: ${PATH_LOGS_QUEUE}
         target: //var/log/rabbitmq
+      # queue storage
       - type: bind
         source: ${PATH_LOGS_QUEUE_STATE}
         target: //var/lib/rabbitmq
+      # custom scripts
+      - ./scripts://home/scripts:ro
 
     networks: [default]
     ports:
@@ -209,7 +209,12 @@ services:
 
     # restart: always
     command: |-
-      rabbitmq-server
+      bash --login -c '
+        # ensure secrets are available to environment
+        source /run/secrets/credentials
+        # start server
+        rabbitmq-server
+      '
 
   queue-admin:
     <<: *ref_queue-server
@@ -222,17 +227,10 @@ services:
     stdin_open: true
     command: |-
       bash --login -c '
+        # ensure secrets are available to environment
         source /run/secrets/credentials
-        rabbitmqctl --node rabbit@$${HTTP_HOST_NAME_RABBIT} list_users
-
-        # create admin
-        rabbitmqctl --node rabbit@$${HTTP_HOST_NAME_RABBIT} delete_user $${HTTP_ADMIN_USER_RABBIT} 2> /dev/null
-        rabbitmqctl --node rabbit@$${HTTP_HOST_NAME_RABBIT} add_user $${HTTP_ADMIN_USER_RABBIT} $${HTTP_ADMIN_PASSWORD_RABBIT}
-        rabbitmqctl --node rabbit@$${HTTP_HOST_NAME_RABBIT} set_permissions -p / $${HTTP_ADMIN_USER_RABBIT} ".*" ".*" ".*"
-        rabbitmqctl --node rabbit@$${HTTP_HOST_NAME_RABBIT} set_user_tags $${HTTP_ADMIN_USER_RABBIT} administrator
-
-        # create guest
-        rabbitmqctl --node rabbit@$${HTTP_HOST_NAME_RABBIT} delete_user $${HTTP_GUEST_USER_RABBIT} 2> /dev/null
-        rabbitmqctl --node rabbit@$${HTTP_HOST_NAME_RABBIT} add_user $${HTTP_GUEST_USER_RABBIT} $${HTTP_GUEST_PASSWORD_RABBIT}
-        rabbitmqctl --node rabbit@$${HTTP_HOST_NAME_RABBIT} set_permissions -p / $${HTTP_GUEST_USER_RABBIT} ".*" ".*" ".*"
+        # assign execution rights
+        chmod +x //home/scripts/registration.sh
+        # execute registration script
+        source //home/scripts/registration.sh
       '

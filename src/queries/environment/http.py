@@ -5,7 +5,6 @@
 # IMPORTS
 # ----------------------------------------------------------------
 
-import json
 from typing import Any
 
 from pydantic import SecretStr
@@ -17,7 +16,6 @@ from .basic import *
 # ----------------------------------------------------------------
 
 __all__ = [
-    "get_docker_network",
     "get_http_ip",
     "get_http_password",
     "get_http_port",
@@ -96,20 +94,3 @@ def get_http_password(
     """
     value = env["HTTP_PASSWORD"]
     return SecretStr(value)
-
-
-@add_environment
-def get_docker_network(
-    # DEV-NOTE: from decorator
-    path: str,
-    env: dict[str, Any],
-    # end decorator args
-) -> bool:
-    """
-    Gets http password.
-    If value not set in .env, will raise a (Key)Exception.
-    """
-    raw = env["DOCKER_NETWORK"]
-    value = json.loads(raw)
-    value = bool(value)
-    return value
