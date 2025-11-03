@@ -1,6 +1,6 @@
 [project]
 name = "example-rabbit-mq"
-version = "0.3.1"
+version = "0.3.2"
 description = 'Example tool to recursively search a file system from a given point and message rabbit mq'
 authors = [
     {name="raj-open", email="raj-open@users.noreply.github.com"},
