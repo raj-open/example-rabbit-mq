@@ -5,7 +5,6 @@
 # IMPORTS
 # ----------------------------------------------------------------
 
-import json
 from datetime import datetime
 from datetime import timedelta
 from functools import partial
@@ -17,6 +16,7 @@ from ..._core.utils.time import *
 from ...algorithms.filesmanager import *
 from ...models.apis.queue import *
 from ...models.application import *
+from ...models.datasources import *
 from ...models.filesmanager import *
 from ...setup import *
 
@@ -89,7 +89,7 @@ def feature(
             "path": subpath,
             "filename": filename,
         }
-        contents = json.dumps(body).encode()
+        contents = serialise_any_element(body)
         chan.basic_publish(
             exchange=msg_exchange,
             routing_key=msg_route,
