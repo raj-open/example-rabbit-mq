@@ -26,7 +26,10 @@ def get_path_logs(
     path: str,
     env: dict[str, str],
     # end decorator args
-    default: str = "logs",
-) -> str:
-    value = env.get("PATH_LOGS", default)
+) -> str | None:
+    """
+    Returns logging path set in environment
+    """
+    # NOTE: ensure that even the empty string is converted to null
+    value = env.get("PATH_LOGS") or None
     return value

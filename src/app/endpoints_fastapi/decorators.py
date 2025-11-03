@@ -6,7 +6,6 @@
 # ----------------------------------------------------------------
 
 import logging
-from datetime import datetime
 from functools import wraps
 from typing import Any
 from typing import Awaitable
@@ -25,8 +24,9 @@ from safetywrap import Ok
 
 from ..._core.constants import *
 from ..._core.logging import *
+from ..._core.utils.any import *
+from ..._core.utils.serialise import *
 from ...guards.http import *
-from ...models.datasources import *
 from ...models.filesmanager import *
 from ...models.internal import *
 from ...setup import *
@@ -136,37 +136,8 @@ def output_as_bytes(
             case Ok():
                 result = result.unwrap()
 
-        # pre-handle jsonisable objects
-        match result:
-            case list():
-                result = AnyArray(root=result)
-
-            case dict():
-                result = AnyDictionary(root=result)
-
         # serialise result
-        match result:
-            case None:
-                contents = None
-
-            case BaseModel():
-                contents = result.model_dump(
-                    mode="json",
-                    by_alias=True,
-                    exclude_none=True,
-                    exclude_unset=False,
-                    exclude_defaults=False,
-                    warnings="none",
-                )
-
-            case bool() | str() | int() | float() | datetime():
-                contents = result
-
-            case bytes():
-                contents = result.decode()
-
-            case None:
-                contents = None
+        contents = serialise_any_as_object(result).unwrap_or(None)  # fmt: skip
 
         # prepare response
         response = JSONResponse(contents, status_code=code)

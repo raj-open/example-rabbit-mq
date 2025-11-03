@@ -41,7 +41,7 @@ __all__ = [
 
 pid = ContextVar[int]("pid")  # fmt: skip
 path_env = ContextVar[str]("path env", default=".env")  # fmt: skip
-path_logging = Property[str](label="path logging", factory=lambda: get_path_logs(path_env.get()))  # fmt: skip
+path_logging = Property[str | None](label="path logging", factory=lambda: get_path_logs(path_env.get()))  # fmt: skip
 path_config = Property[str](label="path application config", factory=lambda: get_root_path("setup", "config.yaml"))  # fmt: skip
 path_requests = Property[str](label="path user requests", factory=lambda: get_root_path("setup", "requests.yaml"))  # fmt: skip
 
