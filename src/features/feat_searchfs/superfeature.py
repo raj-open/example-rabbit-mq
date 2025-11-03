@@ -90,7 +90,7 @@ def superfeature(
                 }
                 errors.append(body)
                 contents = serialise_any_as_text(body).unwrap_or("")
-                chan.basic_publish(exchange=msg_exchange, routing_key=msg_route, body=contents, properties=RABBIG_LOG_LEVEL_ERROR)  # fmt: skip
+                chan.basic_publish(exchange=msg_exchange, routing_key=msg_route, body=contents, properties=RABBIT_LOG_LEVEL_ERROR)  # fmt: skip
 
             except Exception as err:
                 msg = str(err)
@@ -104,7 +104,7 @@ def superfeature(
                 }
                 errors.append(body)
                 contents = serialise_any_as_text(body).unwrap_or("")
-                chan.basic_publish(exchange=msg_exchange, routing_key=msg_route, body=contents, properties=RABBIG_LOG_LEVEL_ERROR)  # fmt: skip
+                chan.basic_publish(exchange=msg_exchange, routing_key=msg_route, body=contents, properties=RABBIT_LOG_LEVEL_ERROR)  # fmt: skip
 
             except BaseException as err:
                 # DEV-NOTE: pass on all other kinds of exceptions
@@ -118,7 +118,7 @@ def superfeature(
                 }
                 errors.append(body)
                 contents = serialise_any_as_text(body).unwrap_or("")
-                chan.basic_publish(exchange=msg_exchange, routing_key=msg_route, body=contents, properties=RABBIG_LOG_LEVEL_ERROR)  # fmt: skip
+                chan.basic_publish(exchange=msg_exchange, routing_key=msg_route, body=contents, properties=RABBIT_LOG_LEVEL_ERROR)  # fmt: skip
                 raise err
 
     """

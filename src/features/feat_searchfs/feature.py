@@ -94,7 +94,7 @@ def feature(
             exchange=msg_exchange,
             routing_key=msg_route,
             body=contents,
-            properties=RABBIG_LOG_LEVEL_INFO,
+            properties=RABBIT_LOG_LEVEL_INFO,
         )
 
     return
