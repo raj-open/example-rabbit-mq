@@ -43,12 +43,6 @@ class CliArguments(CliArgumentsBase):
             default=".env",
         )
         parser.add_argument(
-            "--log",
-            nargs="?",
-            type=str,
-            help="path to files for logging",
-        )
-        parser.add_argument(
             "--verbose",
             action="store_true",
             help="more verbose console logging (force logging level to be DEBUG)",

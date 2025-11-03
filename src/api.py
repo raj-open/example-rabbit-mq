@@ -48,7 +48,6 @@ if __name__ == "__main__":
 
     config.pid.set(PID)
     config.path_env.set(args.env)
-    config.path_logging.set(args.log)
     config.path_config.set(args.config)
     config.initialise_application(
         name="app",
