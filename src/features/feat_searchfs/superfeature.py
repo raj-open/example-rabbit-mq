@@ -60,7 +60,7 @@ def superfeature(
             msg_route = f"[{feat.value}].[{task.label}]"
 
             # ensure case has its own route and that it is cleared
-            chan.queue_declare(queue=msg_route)
+            chan.queue_declare(queue=msg_route, durable=False, exclusive=False)
             if task.options.reset_queue:
                 chan.queue_purge(queue=msg_route)
 
