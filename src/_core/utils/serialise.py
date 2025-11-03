@@ -40,7 +40,7 @@ JSON_TYPE = JSON_TYPE_BASIC | list["JSON_TYPE"] | dict[str, "JSON_TYPE"]
 # ----------------------------------------------------------------
 
 
-def serialise_any_as_object(x: JSON_TYPE, /) -> Result[JSON_TYPE, None]:
+def serialise_any_as_object(x: Any, /) -> Result[JSON_TYPE, None]:
     """
     Converts any element to a JSON-serialisable object.
 
@@ -75,6 +75,11 @@ def serialise_any_as_object(x: JSON_TYPE, /) -> Result[JSON_TYPE, None]:
                 exclude_defaults=False,
                 warnings="none",
             )
+
+            # NOTE: collapse "root" if result is {"root": ...}
+            if isinstance(obj, dict) and list(obj.keys()) == ["root"]:
+                obj = obj.get("root", obj)
+
             return Ok(obj)
 
     raise Err(None)
@@ -86,36 +91,13 @@ def serialise_any_as_text(x: Any, /) -> Result[str, None]:
 
     NOTE: uses safety wrapping
     """
-    # preprocess bytes + all complex JSON-types
-    match x:
-        case bytes():
-            obj = x.decode()
+    obj = serialise_any_as_object(x)
+    if isinstance(obj, Err):
+        return Err(None)
 
-        case list():
-            obj = AnyArray(root=x)
+    obj = obj.unwrap()
 
-        case dict():
-            obj = AnyDictionary(root=x)
-
-        case _:
-            obj = x
-
-    match obj:
-        case datetime():
-            text = f"{obj:%Y-%m-%d %H:%M:%S.%f%z}"
-            return Ok(text)
-
-        case BaseModel():
-            text = obj.model_dump_json(
-                by_alias=True,
-                exclude_none=True,
-                exclude_unset=False,
-                exclude_defaults=False,
-                warnings="none",
-            )
-            return Ok(text)
-
-    # for remainder attempt JSON-serialisation
+    # attempt JSON-serialisation
     try:
         text = json.dumps(
             obj,
