@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  version: "0.3.1"
+  version: "0.3.2"
   title: General models for application
   description: |-
     Schemata for data models in application - configs, enums, etc.

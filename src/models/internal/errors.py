@@ -10,14 +10,14 @@ from typing import Callable
 from typing import Generic
 from typing import ParamSpec
 from typing import TypeVar
-from typing import Union
+
+from ..._core.utils.serialise import *
 
 # ----------------------------------------------------------------
 # EXPORTS
 # ----------------------------------------------------------------
 
 __all__ = [
-    "JSON_TYPE",
     "NOTES",
     "ExceptionWithData",
     "convert_notes_to_exception",
@@ -28,8 +28,6 @@ __all__ = [
 # ----------------------------------------------------------------
 
 PARAMS = ParamSpec("PARAMS")
-JSON_TYPE_BASIC = Union[None, bool, str, int, float]
-JSON_TYPE = Union[JSON_TYPE_BASIC, list[JSON_TYPE_BASIC], dict[str, JSON_TYPE_BASIC]]
 NOTES = TypeVar("NOTES", bound=JSON_TYPE)
 
 # ----------------------------------------------------------------

@@ -5,7 +5,6 @@
 # IMPORTS
 # ----------------------------------------------------------------
 
-import json
 from typing import Any
 
 from pydantic import BaseModel
@@ -21,7 +20,6 @@ __all__ = [
     "AnyDataFrame",
     "AnyDictionary",
     "AnyEntity",
-    "serialise_any_element",
 ]
 
 # ----------------------------------------------------------------
@@ -36,6 +34,7 @@ class AnyEntity(BaseModel):
 
     model_config = ConfigDict(
         use_enum_values=True,
+        arbitrary_types_allowed=True,
     )
 
     value: Any
@@ -50,6 +49,7 @@ class AnyDictionary(BaseModel):
         extra="allow",
         populate_by_name=True,
         use_enum_values=True,
+        arbitrary_types_allowed=True,
     )
 
 
@@ -60,6 +60,7 @@ class AnyArray(RootModel[list[BaseModel]]):
 
     model_config = ConfigDict(
         use_enum_values=True,
+        arbitrary_types_allowed=True,
     )
 
     root: list[Any]
@@ -73,42 +74,6 @@ class AnyDataFrame(RootModel[list[AnyDictionary]]):
     model_config = ConfigDict(
         populate_by_name=True,
         use_enum_values=True,
+        arbitrary_types_allowed=True,
     )
     root: list[AnyDictionary]
-
-
-# ----------------------------------------------------------------
-# METHODS
-# ----------------------------------------------------------------
-
-
-def serialise_any_element(x: Any, /) -> bytes:
-    """
-    Uses pydantic classes to as cleanly as possible JSON-serialise any element.
-    """
-    match x:
-        case list():
-            x = AnyArray(root=x)
-
-        case dict():
-            x = AnyDictionary(root=x)
-
-    if isinstance(x, BaseModel):
-        contents = x.model_dump_json(
-            by_alias=True,
-            exclude_none=True,
-            exclude_unset=False,
-            exclude_defaults=False,
-            warnings="none",
-        ).encode()
-        return contents
-
-    try:
-        contents = json.dumps(x).encode()
-        return contents
-
-    except Exception as _:
-        pass
-
-    contents = str(x).encode()
-    return contents

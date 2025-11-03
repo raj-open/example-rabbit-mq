@@ -47,7 +47,6 @@ class CliArguments(CliArgumentsBase):
             nargs="?",
             type=str,
             help="path to files for logging",
-            default="logs",
         )
         parser.add_argument(
             "--verbose",

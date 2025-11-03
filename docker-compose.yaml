@@ -102,7 +102,7 @@ services:
     volumes:
       - type: bind
         source: ${PATH_LOGS}
-        target: //home/basicuser/app/logs
+        target: //home/basicuser/app/${PATH_LOGS}
       - ./demo://home/basicuser/app/demo:ro
       - ./data://home/basicuser/app/data:rw
       - ./setup://home/basicuser/app/setup:ro
@@ -111,7 +111,7 @@ services:
     # volumes:
     #   - type: bind
     #     source: ${PATH_LOGS}
-    #     target: //home/basicuser/app/logs
+    #     target: //home/basicuser/app/${PATH_LOGS}
     #   - ./demo://home/basicuser/app/demo:ro
     #   - ./data://home/basicuser/app/data:rw
     #   - ./setup://home/basicuser/app/setup:ro
@@ -223,16 +223,16 @@ services:
     command: |-
       bash --login -c '
         source /run/secrets/credentials
-        rabbitmqctl --node rabbit@${HTTP_HOST_NAME_RABBIT} list_users
+        rabbitmqctl --node rabbit@$${HTTP_HOST_NAME_RABBIT} list_users
 
         # create admin
-        rabbitmqctl --node rabbit@${HTTP_HOST_NAME_RABBIT} delete_user $${HTTP_ADMIN_USER_RABBIT} 2> /dev/null
-        rabbitmqctl --node rabbit@${HTTP_HOST_NAME_RABBIT} add_user $${HTTP_ADMIN_USER_RABBIT} $${HTTP_ADMIN_PASSWORD_RABBIT}
-        rabbitmqctl --node rabbit@${HTTP_HOST_NAME_RABBIT} set_permissions -p / $${HTTP_ADMIN_USER_RABBIT} ".*" ".*" ".*"
-        rabbitmqctl --node rabbit@${HTTP_HOST_NAME_RABBIT} set_user_tags $${HTTP_ADMIN_USER_RABBIT} administrator
+        rabbitmqctl --node rabbit@$${HTTP_HOST_NAME_RABBIT} delete_user $${HTTP_ADMIN_USER_RABBIT} 2> /dev/null
+        rabbitmqctl --node rabbit@$${HTTP_HOST_NAME_RABBIT} add_user $${HTTP_ADMIN_USER_RABBIT} $${HTTP_ADMIN_PASSWORD_RABBIT}
+        rabbitmqctl --node rabbit@$${HTTP_HOST_NAME_RABBIT} set_permissions -p / $${HTTP_ADMIN_USER_RABBIT} ".*" ".*" ".*"
+        rabbitmqctl --node rabbit@$${HTTP_HOST_NAME_RABBIT} set_user_tags $${HTTP_ADMIN_USER_RABBIT} administrator
 
         # create guest
-        rabbitmqctl --node rabbit@${HTTP_HOST_NAME_RABBIT} delete_user $${HTTP_GUEST_USER_RABBIT} 2> /dev/null
-        rabbitmqctl --node rabbit@${HTTP_HOST_NAME_RABBIT} add_user $${HTTP_GUEST_USER_RABBIT} $${HTTP_GUEST_PASSWORD_RABBIT}
-        rabbitmqctl --node rabbit@${HTTP_HOST_NAME_RABBIT} set_permissions -p / $${HTTP_GUEST_USER_RABBIT} ".*" ".*" ".*"
+        rabbitmqctl --node rabbit@$${HTTP_HOST_NAME_RABBIT} delete_user $${HTTP_GUEST_USER_RABBIT} 2> /dev/null
+        rabbitmqctl --node rabbit@$${HTTP_HOST_NAME_RABBIT} add_user $${HTTP_GUEST_USER_RABBIT} $${HTTP_GUEST_PASSWORD_RABBIT}
+        rabbitmqctl --node rabbit@$${HTTP_HOST_NAME_RABBIT} set_permissions -p / $${HTTP_GUEST_USER_RABBIT} ".*" ".*" ".*"
       '

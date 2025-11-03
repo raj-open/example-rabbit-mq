@@ -13,8 +13,11 @@ from .logging import *
 # ----------------------------------------------------------------
 
 __all__ = [
-    "RABBIG_LOG_LEVEL_ERROR",
-    "RABBIG_LOG_LEVEL_INFO",
-    "RABBIG_LOG_LEVEL_WARNING",
+    "RABBIT_LOG_LEVEL_ERROR",
+    "RABBIT_LOG_LEVEL_INFO",
+    "RABBIT_LOG_LEVEL_WARNING",
+    "RABBIT_ROUTE_ERROR",
+    "RABBIT_ROUTE_INFO",
+    "RABBIT_ROUTE_WARNING",
     "ChannelContext",
 ]

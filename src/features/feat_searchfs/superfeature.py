@@ -11,10 +11,10 @@ from safetywrap import Err
 from safetywrap import Ok
 from safetywrap import Result
 
+from ..._core.utils.serialise import *
 from ..._core.utils.time import *
 from ...models.apis.queue import *
 from ...models.application import *
-from ...models.datasources import *
 from ...models.internal.errors import *
 from ...setup import *
 from .feature import *
@@ -35,7 +35,7 @@ __all__ = [
 def superfeature(
     tasks: list[RequestTask],
     /,
-) -> Result[str, list[str]]:
+) -> Result[str, list[JSON_TYPE]]:
     """
     Calls `SEARCH-FS` features for a list of tasks
     """
@@ -51,7 +51,7 @@ def superfeature(
     Establish connection to message queue
     """
 
-    with ChannelContext(settings=settings) as chan:
+    with ChannelContext(settings) as chan:
         # FIXME: publication to exchages fails when msg_exchange is not ""
         # chan.exchange_declare(exchange=msg_exchange, exchange_type="direct")
 
@@ -60,7 +60,7 @@ def superfeature(
             msg_route = f"[{feat.value}].[{task.label}]"
 
             # ensure case has its own route and that it is cleared
-            chan.queue_declare(queue=msg_route)
+            chan.queue_declare(queue=msg_route, durable=False, exclusive=False)
             if task.options.reset_queue:
                 chan.queue_purge(queue=msg_route)
 
@@ -89,8 +89,8 @@ def superfeature(
                     "data": err.data,
                 }
                 errors.append(body)
-                contents = serialise_any_element(body)
-                chan.basic_publish(exchange=msg_exchange, routing_key=msg_route, body=contents, properties=RABBIG_LOG_LEVEL_ERROR)  # fmt: skip
+                contents = serialise_any_as_text(body).unwrap_or("")
+                chan.basic_publish(exchange=msg_exchange, routing_key=msg_route, body=contents, properties=RABBIT_LOG_LEVEL_ERROR)  # fmt: skip
 
             except Exception as err:
                 msg = str(err)
@@ -103,8 +103,8 @@ def superfeature(
                     },
                 }
                 errors.append(body)
-                contents = serialise_any_element(body)
-                chan.basic_publish(exchange=msg_exchange, routing_key=msg_route, body=contents, properties=RABBIG_LOG_LEVEL_ERROR)  # fmt: skip
+                contents = serialise_any_as_text(body).unwrap_or("")
+                chan.basic_publish(exchange=msg_exchange, routing_key=msg_route, body=contents, properties=RABBIT_LOG_LEVEL_ERROR)  # fmt: skip
 
             except BaseException as err:
                 # DEV-NOTE: pass on all other kinds of exceptions
@@ -117,8 +117,8 @@ def superfeature(
                     },
                 }
                 errors.append(body)
-                contents = serialise_any_element(body)
-                chan.basic_publish(exchange=msg_exchange, routing_key=msg_route, body=contents, properties=RABBIG_LOG_LEVEL_ERROR)  # fmt: skip
+                contents = serialise_any_as_text(body).unwrap_or("")
+                chan.basic_publish(exchange=msg_exchange, routing_key=msg_route, body=contents, properties=RABBIT_LOG_LEVEL_ERROR)  # fmt: skip
                 raise err
 
     """
