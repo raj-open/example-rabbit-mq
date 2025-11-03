@@ -11,10 +11,10 @@ from safetywrap import Err
 from safetywrap import Ok
 from safetywrap import Result
 
+from ..._core.utils.serialise import *
 from ..._core.utils.time import *
 from ...models.apis.queue import *
 from ...models.application import *
-from ...models.datasources import *
 from ...models.internal.errors import *
 from ...setup import *
 from .feature import *
@@ -35,7 +35,7 @@ __all__ = [
 def superfeature(
     tasks: list[RequestTask],
     /,
-) -> Result[str, list[str]]:
+) -> Result[str, list[JSON_TYPE]]:
     """
     Calls `SEARCH-FS` features for a list of tasks
     """
@@ -89,7 +89,7 @@ def superfeature(
                     "data": err.data,
                 }
                 errors.append(body)
-                contents = serialise_any_element(body)
+                contents = serialise_any_as_text(body).unwrap_or("")
                 chan.basic_publish(exchange=msg_exchange, routing_key=msg_route, body=contents, properties=RABBIG_LOG_LEVEL_ERROR)  # fmt: skip
 
             except Exception as err:
@@ -103,7 +103,7 @@ def superfeature(
                     },
                 }
                 errors.append(body)
-                contents = serialise_any_element(body)
+                contents = serialise_any_as_text(body).unwrap_or("")
                 chan.basic_publish(exchange=msg_exchange, routing_key=msg_route, body=contents, properties=RABBIG_LOG_LEVEL_ERROR)  # fmt: skip
 
             except BaseException as err:
@@ -117,7 +117,7 @@ def superfeature(
                     },
                 }
                 errors.append(body)
-                contents = serialise_any_element(body)
+                contents = serialise_any_as_text(body).unwrap_or("")
                 chan.basic_publish(exchange=msg_exchange, routing_key=msg_route, body=contents, properties=RABBIG_LOG_LEVEL_ERROR)  # fmt: skip
                 raise err
 

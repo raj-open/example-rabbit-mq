@@ -12,11 +12,11 @@ from functools import partial
 from pika.adapters.blocking_connection import BlockingChannel
 
 from ..._core.logging import *
+from ..._core.utils.serialise import *
 from ..._core.utils.time import *
 from ...algorithms.filesmanager import *
 from ...models.apis.queue import *
 from ...models.application import *
-from ...models.datasources import *
 from ...models.filesmanager import *
 from ...setup import *
 
@@ -89,7 +89,7 @@ def feature(
             "path": subpath,
             "filename": filename,
         }
-        contents = serialise_any_element(body)
+        contents = serialise_any_as_text(body).unwrap_or("")
         chan.basic_publish(
             exchange=msg_exchange,
             routing_key=msg_route,
