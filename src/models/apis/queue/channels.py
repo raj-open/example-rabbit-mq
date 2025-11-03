@@ -27,7 +27,7 @@ __all__ = [
 
 
 @contextmanager
-def ChannelContext(settings: ConnectionParameters, /) -> Generator[BlockingChannel]:
+def ChannelContext(settings: ConnectionParameters, /) -> Generator[BlockingChannel, None, None]:
     """
     Provides a Channel as a context manager
     """
