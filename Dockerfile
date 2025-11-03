@@ -2,7 +2,7 @@
 # BUILD STAGE - bedrock / pull image
 # ----------------------------------------------------------------
 
-FROM python:3.12-slim AS stage-bedrock
+FROM python:3.14-slim AS stage-bedrock
 
 # ----------------------------------------------------------------
 # BUILD STAGE - set up system
