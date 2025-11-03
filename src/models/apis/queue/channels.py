@@ -32,7 +32,11 @@ def ChannelContext(settings: ConnectionParameters, /) -> Generator[BlockingChann
     Provides a Channel as a context manager
     """
     with BlockingConnection(settings) as connection:
-        chan = connection.channel()
-        yield chan
-        logging.info("gracefully terminating channel")
-        chan.close()
+        try:
+            chan = connection.channel()
+            yield chan
+
+        finally:
+            # DEV-NOTE: this is carried out regardless of (base)exceptions - which are rethrown
+            logging.info("gracefully terminating channel")
+            chan.close()
