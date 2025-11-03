@@ -50,7 +50,7 @@ http_ip = Property[str](label="http ip", factory=lambda: get_http_ip(path_env.ge
 http_port = Property[int](label="http port", factory=lambda: get_http_port(path_env.get()))  # fmt: skip
 http_user = Property[str](label="http user", factory=lambda: get_http_user(path_env.get()))  # fmt: skip
 http_password = Property[SecretStr](label="http password", factory=lambda: get_http_password(path_env.get()))  # fmt: skip
-docker_network = Property[bool](label="is in docker network", factory=lambda: get_docker_network(path_env.get()))  # fmt: skip
+shared_network = Property[bool](label="is in docker network", factory=lambda: get_shared_network(path_env.get()))  # fmt: skip
 
 # for rabbit/queue
 http_host_name_rabbit = Property[str](label="host name of rabbit mq", factory=lambda: get_http_host_name_rabbit(path_env.get()))  # fmt: skip
@@ -129,9 +129,9 @@ def get_queue_parameters() -> ConnectionParameters:
     pw = http_password_rabbit_guest().get_secret_value()
     creds = PlainCredentials(username=user, password=pw)
 
-    # NOTE: valid value of host depends on whether current application is inside the docker network
+    # NOTE: valid value of host depends on whether application is shared network
     host = http_ip()
-    if docker_network():
+    if shared_network():
         host = http_host_name_rabbit()
     port = http_port_rabbit_queue()
 

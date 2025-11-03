@@ -8,6 +8,7 @@
 from .basic import *
 from .http import *
 from .mode import *
+from .network import *
 from .rabbit import *
 
 # ----------------------------------------------------------------
@@ -16,7 +17,6 @@ from .rabbit import *
 
 __all__ = [
     "add_environment",
-    "get_docker_network",
     "get_environment",
     "get_http_host_name_rabbit",
     "get_http_ip",
@@ -30,4 +30,5 @@ __all__ = [
     "get_http_user_rabbit_admin",
     "get_http_user_rabbit_guest",
     "get_path_logs",
+    "get_shared_network",
 ]
